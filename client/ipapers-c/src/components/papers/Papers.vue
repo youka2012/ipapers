@@ -1,26 +1,50 @@
 <template>
     <div>
         <div class="menu-wrap">
-            <a href="javascript:void (0);" class="action-button">
+
+        </div>
+        <div class="menu-actions">
+            <a @click="addPaper" href="javascript:void (0);" class="action-button">
                 <Icon type="md-add-circle"/>
             </a>
-            <a href="javascript:void (0);" class="action-button">
-                <Icon type="md-planet" />
-            </a>
-            <a href="javascript:void (0);" class="action-button">
-                <Icon type="md-log-out" />
+            <br>
+            <a @click="logout" href="javascript:void (0);" class="action-button">
+                <Icon type="md-log-out"/>
             </a>
         </div>
         <router-view></router-view>
     </div>
 </template>
 <script>
-    export default {}
+    export default {
+        methods: {
+            addPaper() {
+                this.$router.push('/paper/create');
+            },
+            logout() {
+                this.$Modal.confirm({
+                    title: '确认',
+                    content: '<p>确定退出登陆？</p>',
+                    onOk: () => {
+                        this.$router.push('/login');
+                    },
+                    onCancel: () => {
+                    }
+                });
+            }
+        }
+    }
 </script>
 <style scoped>
     .menu-wrap {
         color: black;
-        text-align: right;
+        background-color: #f8f8f9;
+    }
+
+    .menu-actions{
+        position: fixed;
+        right:16%;
+        top:40px;
     }
 
     .action-button {

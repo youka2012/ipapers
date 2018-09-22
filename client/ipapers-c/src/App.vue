@@ -3,7 +3,7 @@
         <div class="main">
             <router-view></router-view>
         </div>
-        <div class="app-footer">@MaChao & Built with Node.js,Express,MongoDB,Vue,vue-router and iview & all source code shared</div>
+        <!--<div class="app-footer">@MaChao & Built with Node.js,Express,MongoDB,Vue,vue-router and iview & all source code shared</div>-->
         <BackTop></BackTop>
     </div>
 </template>
@@ -28,13 +28,13 @@
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: #2c3e50;
+        height: 100%;
         min-height: 100%;
         width: 60%;
-        padding-bottom: 60px;
+        padding-bottom: 40px;
         margin:0 auto;
         position: relative;
         box-sizing: border-box;
-        background-color: #fff;
     }
 
     .main {
@@ -54,7 +54,8 @@
         text-align: center;
         background-color: #fff;
         border-top: solid 1px #dddddd;
-        color: #000000;
+        color: #808695;
+        opacity:0.5;
     }
 
     .ivu-layout-header{

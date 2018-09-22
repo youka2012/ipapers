@@ -4,8 +4,9 @@
             <Form v-if="!isLoginForm" ref="codeForm" :model="codeData" :rules="ruleCodeForm" key="codeForm"
                   class="login-form">
                 <FormItem prop="code">
-                    <Input type="text" v-model="codeData.code" placeholder="请输入问卷码" class="input-account login-input"
+                    <Input type="text" v-model="codeData.code" placeholder="请输入问卷码" class="input-code login-input"
                            clearable autofocus>
+                        <Icon type="md-barcode" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
                 <FormItem>
@@ -75,7 +76,12 @@
         methods: {
             onEnter: function (form) {
                 if (form === 'codeForm') {
-                    this.$router.push('/blank/'+this.codeData.code);
+                    this.$router.push({
+                        name:'blank',
+                        params:{
+                            paperCode:this.codeData.code
+                        }
+                    });
                 } else if (form === 'loginForm') {
                     this.$router.push('/paper');
                 } else {
@@ -128,12 +134,13 @@
 
     .card-login {
         padding: 20px 40px;
-        background: aliceblue;
+        background: #f8f8f9;
     }
 
     .login-form {
         width: 360px;
-        margin: auto;
+        margin:0 auto;
+        padding-left: 33px;
     }
 
     .login-input {

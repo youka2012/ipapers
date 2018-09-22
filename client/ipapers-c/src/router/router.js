@@ -8,19 +8,22 @@ import PaperList from '../components/papers/PaperList'
 var routes = [
     {path: '/', redirect: '/login'},
     {
+        name:'login',
         path: "/login",
         component: Login
     },
     {
+        name:'paper',
         path: "/paper",
         component: Papers, children: [
             {path: '/', redirect: '/paper/list'},
-            {path: '/paper/list', component: PaperList},
-            {path: '/paper/create', component: PaperCreate},
-            {path: '/paper/detail/:id', component: PaperDetail}
+            {name:'list',path: '/paper/list', component: PaperList},
+            {name:'create',path: '/paper/create', component: PaperCreate},
+            {name:'detail',path: '/paper/detail', component: PaperDetail}
         ]
     }, {
-        path: "/blank/:code",
+        name:'blank',
+        path: "/blank",
         component: BlankEdit
     }
 ];

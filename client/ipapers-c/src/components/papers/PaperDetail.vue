@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p>{{$route.params.id}}</p>
+        <p>{{$route.params.paperId}}</p>
     </div>
 </template>
 <script>
