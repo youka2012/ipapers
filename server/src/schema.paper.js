@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 module.exports = mongoose.model(
   "papers",
   new Schema({
+    acount:String,
     title: String,
     dateLine: String,
     date: String,

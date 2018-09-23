@@ -10,5 +10,23 @@ module.exports = {
     replset: { rs_name: 'myReplicaSetName' },
     user: 'myUserName',
     pass: 'myPassword'
+  },
+  init_data:{
+    db:{
+      users:[
+        {
+          name:'admin',
+          password:'chaoma2018',
+        },
+        {
+          name:'test',
+          password:'test1234',
+        },
+        {
+          name:'chao',
+          password:'ma1234',
+        }
+      ]
+    }
   }
 };
