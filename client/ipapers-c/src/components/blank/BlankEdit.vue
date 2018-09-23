@@ -6,8 +6,29 @@
                     <h2 @click="getDetail('P',paper.code)" class="item-title">{{this.paper.title}}</h2>
                 </Tooltip>
                 <h4>{{'问卷码: '+this.paper.code+'    截至:' + paper.dateLine}}</h4>
-                <h4>{{'创建人:' + paper.creator + '    联系方式:' +paper.contact}}</h4>
+                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.date+'   联系方式:' +paper.contact}}</h4>
             </div>
+        </Card>
+
+        <Card class="profile-card card-item">
+            <Form ref="profileForm" :model="profile" :rules="ruleProfile" :label-width="100" inline>
+                <FormItem label="工号" prop="number">
+                    <Input v-model="profile.number" placeholder="Enter your number" clearable></Input>
+                </FormItem>
+                <FormItem label="姓名" prop="name">
+                    <Input v-model="profile.name" placeholder="Enter your name" clearable></Input>
+                </FormItem>
+                <FormItem label="部门" prop="department">
+                    <Input v-model="profile.department" placeholder="Enter your department" clearable></Input>
+                </FormItem>
+                <FormItem label="联系方式" prop="contact">
+                    <Input v-model="profile.contact" placeholder="Enter your contact" clearable></Input>
+                </FormItem>
+                <FormItem label="备注" prop="remark" class="remark-input">
+                    <Input v-model="profile.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}"
+                           placeholder="Enter the remark..." clearable></Input>
+                </FormItem>
+            </Form>
         </Card>
 
         <div class="question-card" v-for="question in paper.questions" :key="question.code">
@@ -58,6 +79,7 @@
     var paperMock = {
         code: '123456',
         title: '九月份职业培训调查',
+        date: '2018.10.8',
         dateLine: '2018.10.8',
         creator:'machao',
         contact:'19911122333',
@@ -113,16 +135,39 @@
             return {
                 paperCode: this.$route.params.paperCode,
                 paper: {},
+                profile:{
+                    number:'',
+                    name:'',
+                    department:'',
+                    remark:''
+                },
                 answers: [
-                    /*{code:'',required:true,answer:{}}*/
-                ]
+                    /*{code:'',required:true,type:'',answer:{}}*/
+                ],
+                ruleProfile:{
+                    number: [
+                        {required: true, message: 'Please input your number', trigger: 'blur'}
+                    ],
+                    name: [
+                        {required: true, message: 'Please input your name', trigger: 'blur'}
+                    ],
+                    contact: [
+                        {required: true, message: 'Please input your contact', trigger: 'blur'}
+                    ],
+                    department: [
+                        {required: true, message: 'Please input your department', trigger: 'blur'}
+                    ],
+                    remark: [
+                        {required: false}
+                    ],
+                }
             }
         },
         created() {
             this.fetchData();
             this.answers = this.paper.questions.map(function (question) {
                 var answer;
-                switch (question.item) {
+                switch (question.type) {
                     case 'SINGLE':
                         answer = '';
                         break;
@@ -133,7 +178,7 @@
                         answer = '';
                         break;
                 }
-                return {code: question.code, required: question.required, answer: answer};
+                return {code: question.code, required: question.required,type:question.type, answer: answer};
             })
         },
         methods: {
@@ -162,7 +207,10 @@
                 });
             },
             submit() {
-                console.log(this.answers);
+                //todo check input
+                var reply = Object.assign({},this.profile);
+                reply.answers = this.answers;
+                console.log(reply);
             },
             back() {
                 this.$router.push('/login');
@@ -184,6 +232,11 @@
         height: 100%;
         width: 100%;
         background-color: rgb(238, 238, 238);
+    }
+
+    .remark-input{
+        padding: 0 25%;
+        width: 100%;
     }
 
     .item-title {

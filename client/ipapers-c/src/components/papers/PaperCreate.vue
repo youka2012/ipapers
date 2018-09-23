@@ -24,36 +24,36 @@
             </Form>
         </Card>
 
-        <div class="card-item">
-            <Card>
-                <p slot="title" class="question-card-title">
-                    <span>题目列表</span>
+        <Card class="card-item">
+            <p slot="title" class="question-card-title">
+                <span>题目列表</span>
+            </p>
+            <Card v-for="(question,index) in paper.questions" :key="index" :bordered="false"
+                  class="question-card card-item  question-list">
+                <p slot="title">
+                    <span>{{index+1 + " . " +question.title}}</span>
                 </p>
-                <Card v-for="(question,index) in paper.questions" :key="index" :bordered="false"
-                      class="question-card card-item  question-list">
-                    <p slot="title">
-                        <span>{{question.title}}</span>
+                <p>题目类型:{{question.type}} 必填{{question.required}}</p>
+                <div v-if="question.type !== 'INPUT'">
+                    <p v-for="item in question.items" :key="item.index">
+                        <span class="item-index">{{item.index}}</span>
+                        <span class="item-content">{{item.content}}</span>
                     </p>
-                    <p>题目类型:{{question.type}} 必填{{question.required}}</p>
-                    <div v-if="question.type !== 'INPUT'">
-                        <p v-for="item in question.items" :key="item.index">
-                            <span class="item-index">{{item.index}}</span>
-                            <span class="item-content">{{item.content}}</span>
-                        </p>
-                    </div>
-                    <div v-else>
-                        <P></P>
-                    </div>
-                </Card>
+                </div>
+                <div v-else>
+                    <P></P>
+                </div>
             </Card>
-
-        </div>
+        </Card>
 
         <Card class="add-card card-item">
             <Form ref="questionForm" :model="newQuestion" :rules="ruleQuestion" :label-width="80">
                 <FormItem label="题目" prop="title">
                     <Input v-model="newQuestion.title" type="textarea" :autosize="{minRows: 2,maxRows: 5}"
                            placeholder="Enter the question..." clearable></Input>
+                </FormItem>
+                <FormItem label="" prop="required">
+                    <Checkbox class="required-checkbox" v-model="newQuestion.required">必填</Checkbox>
                 </FormItem>
                 <FormItem label="" prop="type">
                     <RadioGroup v-model="newQuestion.type">
@@ -62,15 +62,12 @@
                         <Radio label="INPUT">填写题</Radio>
                     </RadioGroup>
                 </FormItem>
-                <FormItem label="" prop="required">
-                    <Checkbox class="required-checkbox" v-model="newQuestion.required">必填</Checkbox>
-                </FormItem>
                 <div v-if="newQuestion.type !== 'INPUT'" style="text-align:left;">
                     <FormItem label="选项数目" prop="itemsSize">
                         <InputNumber :max="12" :min="1" v-model="itemsSize"></InputNumber>
                     </FormItem>
                     <P v-for="(item,index) in newQuestion.items" :key="index" class="question-item-group">
-                        <label class="question-item-index">{{questionItemList[index] + "  :"}}</label>
+                        <label class="question-item-index">{{questionItemList[index] + " :"}}</label>
                         <Input v-model="item.content" class="question-item-input" type="textarea"
                                :autosize="{minRows: 1,maxRows: 5}" placeholder="Enter the content" clearable></Input>
                     </P>
@@ -85,7 +82,6 @@
         <Card class="action-card card-item">
             <div style="text-align:center">
                 <Button @click="handleSubmit" type="success">提交问卷表</Button>
-                <Button @click="handleBack" style="margin-left: 8px">返回问卷列表页</Button>
             </div>
         </Card>
     </div>
@@ -103,6 +99,7 @@
                     expect: '',
                     questions: [
                         /*{
+                            code:'',
                             title:'',
                             type:'',
                             required:true,
@@ -139,6 +136,7 @@
                 questionItemList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
                 itemsSize: 1,
                 newQuestion: {
+                    code:'',
                     title: '',
                     type: 'SINGLE',
                     required: true,
@@ -192,18 +190,26 @@
                 })
             },
             handleSubmit() {
-                console.log(this.paper);
-                this.$refs['paperForm'].validate((valid) => {
-                    if (valid) {
-                        this.$Message.success('验证通过!');
-                    } else {
-                        this.$Message.error('验证失败!');
+                this.$Modal.confirm({
+                    title: '确认',
+                    content: '<p>确定新建此问卷</p>',
+                    onOk: () => {
+                        this.$refs['paperForm'].validate((valid) => {
+                            if (valid) {
+                                this.$Message.success('验证通过!');
+                            } else {
+                                this.$Message.error('验证失败!');
+                            }
+                        })
+                    },
+                    onCancel: () => {
                     }
-                })
+                });
+                for(var i = 0 ;i<this.paper.questions.length;i++){
+                    this.paper.questions[i]['code'] = i;
+                }
+                console.log(this.paper);
             },
-            handleBack() {
-                this.$router.push('/paper');
-            }
         }
     }
 </script>
@@ -230,12 +236,12 @@
         height: 100%;
         width: 100%;
         background-color: rgb(238, 238, 238);
-        padding: 20px;
         text-align: left;
     }
 
     .card-item {
-        margin-bottom: 17px;
+        padding: 10px 6px;
+        margin-bottom: 8px;
     }
 
     .question-card-title {
@@ -251,13 +257,13 @@
     }
 
     .question-item-index {
-        width: 20%;
+        width: 8%;
         color: rosybrown;
         padding-left: 1px;
     }
 
     .question-item-input {
-        width: 80%;
+        width: 92%;
         padding-left: 8px;
     }
 

@@ -79,11 +79,16 @@
                     this.$router.push({
                         name:'blank',
                         params:{
-                            paperCode:this.codeData.code
+                            paperCode:"q1111"
                         }
                     });
                 } else if (form === 'loginForm') {
-                    this.$router.push('/paper');
+                    this.$router.push({
+                        name:'list',
+                        query:{
+                            userName:'userNameA'
+                        }
+                    });
                 } else {
                     return null;
                 }
@@ -127,6 +132,7 @@
 <style scoped>
     .login-wrap {
         height: 100%;
+        min-height: 900px;
         display: flex;
         align-items: center;
         justify-content: center;

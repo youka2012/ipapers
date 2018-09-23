@@ -1,7 +1,7 @@
 <template>
     <div class="list-wrap">
         <Timeline>
-            <TimelineItem v-for="paper in papers" :key="paper.id" color="#000000">
+            <TimelineItem v-for="paper in papers" :key="paper.id" color="orange">
                 <p class="time">
                     <span>{{paper.title}}</span>
                     <span class="actions">
@@ -10,24 +10,29 @@
                             <Icon type="md-information-circle"/>
                         </a>
                         </Tooltip>
-                        <a @click="getDetail(paper.id)" href="javascript:void (0);" class="action-button">
-                            <Icon type="md-analytics"/>
+                        <a @click="getDetail(paper.id)" href="javascript:void (0);" class="action-button"
+                           title="查看问卷详细">
+                            <Icon type="ios-book"/>
+                        </a>
+                        <a @click="analyzeAnswers(paper.id)" href="javascript:void (0);" class="action-button"
+                           title="查看答题分析">
+                            <Icon type="ios-analytics"/>
                         </a>
                         <a v-if="paper.on" @click="toggleStatus(paper.id)" href="javascript:void (0);"
-                           class="action-button">
-                            <Icon type="md-pause"/>
+                           class="action-button" title="点击暂停">
+                            <Icon type="ios-pause"/>
                         </a>
                         <a v-else-if="!paper.on" @click="toggleStatus(paper.id)"
-                           href="javascript:void (0);" class="action-button">
-                            <Icon type="md-play"/>
+                           href="javascript:void (0);" class="action-button" title="点击恢复">
+                            <Icon type="ios-play"/>
                         </a>
-                        <a @click="deletePaper(paper.id)" class="action-button">
-                           <Icon type="md-close-circle"/>
+                        <a @click="deletePaper(paper.id)" class="action-button" title="删除问卷">
+                           <Icon type="ios-close-circle"/>
                         </a>
                     </span>
                 </p>
                 <p class="content">
-                    <span>2019.3.7</span><span>||</span><span>已填：{{paper.counter}}</span><span>||</span><span>应填：{{paper.expect}}</span>
+                    <span>{{'创建日期：'+paper.date}}</span><span>|</span><span>{{'截至：'+paper.dateLine}}</span><span>|</span><span>已填：{{paper.counter}}</span><span>|</span><span>应填：{{paper.expect}}</span>
                 </p>
             </TimelineItem>
 
@@ -42,7 +47,8 @@
             title: '九月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业培训调查',
             on: true,
             description: '九月份职业培训调查九月份职业培训调查九月份职业培训调查业培训调查业培训调查业培训调查',
-            createDate: '2018.9.22',
+            date: '2018.9.22',
+            dateLine: '2018.10.8',
             outdated: false,
             expect: 66,
             counter: 30,
@@ -53,7 +59,8 @@
             title: '中秋节职业培训调查',
             on: false,
             description: '中秋节职业培训调查中秋节职业培训调查中秋节职业培训调查业培训调查业培训调查业培训调查',
-            createDate: '2018.9.17',
+            date: '2018.9.17',
+            dateLine: '2018.10.8',
             outdated: false,
             expect: 66,
             counter: 15,
@@ -64,7 +71,8 @@
             title: '冬季职业培训调查',
             on: true,
             description: '冬季职业培训调查冬季职业培训调查业培训调查业培训调查业培训调查',
-            createDate: '2018.9.14',
+            date: '2018.9.14',
+            dateLine: '2018.10.8',
             outdated: true,
             expect: 66,
             counter: 10,
@@ -76,7 +84,8 @@
             on: true,
             outdated: false,
             description: '春节春节春节春节春节春节业培训调查业培训调查业培训调查',
-            createDate: '2018.9.11',
+            date: '2018.9.11',
+            dateLine: '2018.10.8',
             expect: 66,
             counter: 10,
         },
@@ -100,6 +109,15 @@
                     }
                 });
             },
+            analyzeAnswers(paperId) {
+                console.log(paperId);
+                this.$router.push({
+                    name: 'analysis',
+                    params: {
+                        paperId: paperId
+                    }
+                });
+            },
             toggleStatus(paperId) {
                 console.log(paperId);
                 var index = this.papers.findIndex(function (paper) {
@@ -116,7 +134,7 @@
                         var index = this.papers.findIndex(function (paper) {
                             return paper.id === paperId;
                         });
-                        this.papers.splice([index],1);
+                        this.papers.splice([index], 1);
                         this.$Message.info('删除成功');
                     },
                     onCancel: () => {
@@ -131,9 +149,11 @@
     a {
         color: #000000;
     }
-.ivu-timeline{
-    width: 100%;
-}
+
+    .ivu-timeline {
+        width: 100%;
+    }
+
     .list-wrap {
         width: 100%;
         display: flex;
