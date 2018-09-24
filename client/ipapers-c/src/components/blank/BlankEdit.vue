@@ -211,6 +211,7 @@
                 var reply = Object.assign({},this.profile);
                 reply.answers = this.answers;
                 console.log(reply.answers[0].answer);
+
             },
             back() {
                 this.$router.push('/login');

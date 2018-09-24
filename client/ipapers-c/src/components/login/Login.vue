@@ -47,6 +47,7 @@
 </template>
 
 <script>
+
     export default {
         data() {
             return {
@@ -83,12 +84,16 @@
                         }
                     });
                 } else if (form === 'loginForm') {
-                    this.$router.push({
-                        name:'list',
-                        params:{
-                            userName:'userNameA'
+                    this.$fetch.post('/login',{name:this.loginData.account,password:this.loginData.password},json => {
+                        if(json&&json.token){
+                            window.localStorage.setItem('token',json.token);
+                            window.localStorage.setItem('userName',this.loginData.account);
+                            this.$router.push({
+                                name:'list',
+                            });
                         }
                     });
+
                 } else {
                     return null;
                 }

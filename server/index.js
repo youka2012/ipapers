@@ -140,7 +140,7 @@ apiRoutes.get("/setPaperStatus", function(req, res) {
   var name = req.decoded._doc.name,
     status = req.query.status,
     paperId = req.query.paperId;
-  if (!name || !status || !paperId) {
+  if (!name || !paperId) {
     return res.json(utils.createMsg(400));
   }else{
     MongoDao.getPaperIdsByUserName(name, function name(ids) {

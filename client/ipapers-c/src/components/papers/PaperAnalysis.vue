@@ -15,6 +15,7 @@
     </div>
 </template>
 <script>
+    /* eslint-disable */
     var paperMock = {
         code: '123456',
         title: '九月份职业培训调查',
@@ -25,6 +26,7 @@
         description: '职业培训调查',
         answerList: [
             {
+                id:'1111a',
                 number: '1001',
                 name: 'jack',
                 department: 'dev',
@@ -48,6 +50,7 @@
                 ]
             },
             {
+                id:'222a',
                 number: '2002',
                 name: 'pppit',
                 department: 'sup',
@@ -137,7 +140,7 @@
                                     },
                                     on:{
                                         click: () => {
-                                            this.deleteItem(params.index)
+                                            this.deleteItem(params)
                                         }
                                     }
                                 }, '[DEL]')
@@ -200,10 +203,31 @@
         },
         methods: {
             fetchData() {
-                this.paper = paperMock;
+                // this.paper = paperMock;
+                this.$fetch.get('/api/paperAnalysis',{paperId:this.paperId},json=>{
+                    this.paper = json;
+                })
             },
             deleteItem(index){
-                alert(index)
+                var answerId = this.paper.answerList[index].id;
+                this.$Modal.confirm({
+                    title: '确认',
+                    content: '<p>确定删除此问卷</p>',
+                    onOk: () => {
+                        var index = this.papers.findIndex(function (paper) {
+                            return paper.id === paperId;
+                        });
+                        if(index !== -1){
+                            this.$fetch.get('/api/deleteAnswer',{answerId},res =>{
+                                if(res === 200){
+                                    this.papers.answerList.splice([index], 1);
+                                }
+                            });
+                        }
+                    },
+                    onCancel: () => {
+                    }
+                });
             }
         }
     }

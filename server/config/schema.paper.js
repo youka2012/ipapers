@@ -6,7 +6,7 @@ module.exports = mongoose.model(
   new Schema({
     code:String,
     acount:String,
-    status:String,
+    on:Boolean,
     title: String,
     dateLine: String,
     createDate: String,
@@ -17,7 +17,6 @@ module.exports = mongoose.model(
     questions: [
       {
         index:Number,
-        code: String,
         title: String,
         type: String,
         required: Boolean,

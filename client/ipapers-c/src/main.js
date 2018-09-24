@@ -3,17 +3,19 @@ import VueRouter from 'vue-router';
 import App from './App.vue';
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
-import axios from 'axios';
+/*import axios from 'axios';
 //QS是axios库中带的，不需要我们再npm安装一个
-import Qs from 'qs';
+import Qs from 'qs';*/
 import routes from './router/router'
-import MyFetch from './fetch/MyFetch'
+
 require('es6-promise').polyfill();
+
+import MyFetch from './fetch/MyFetch'
 
 Vue.use(MyFetch);
 
-Vue.prototype.axios = axios;
-Vue.prototype.qs = Qs;
+/*Vue.prototype.axios = axios;
+Vue.prototype.qs = Qs;*/
 
 Vue.config.productionTip = false;
 

@@ -5,7 +5,7 @@ var Answer = require("./config/schema.answer");
 
 module.exports = {
   getActivePaperByCode(_code, _callBack) {
-    Paper.findOne({ code: _code, status: "ON" }, function(err, data) {
+    Paper.findOne({ code: _code, on: true }, function(err, data) {
         if(err){
             _callBack(null);
         }else{
@@ -14,20 +14,20 @@ module.exports = {
     });
   },
   getUserByUserName(_userName, _callBack) {
-      console.log(_userName);
+  console.log(_userName);
     User.findOne({ name: _userName }, function(err, data) {
         if(err){
             _callBack(null);
         }else{
             _callBack(data);
-            console.log(data)
+            console.log(data);
         }
     });
   },
   getPapersByUserName(_userName, _callBack) {
     Paper.find(
       { acount: _userName },
-      "code acount status title dateLine createDate creator contact description expect",
+      "code acount on title dateLine createDate creator contact description expect",
       function(err, data) {
         if(err){
             _callBack(null);
@@ -48,7 +48,7 @@ module.exports = {
   },
   setPaperStatusByPaperId(_paperId, _status, _callBack) {
     var conditions = { _id: _paperId };
-    var update = { $set: { status: _status } };
+    var update = { $set: { on: _status } };
     Paper.update(conditions, update, function(error) {
       if (error) {
         _callBack(0);

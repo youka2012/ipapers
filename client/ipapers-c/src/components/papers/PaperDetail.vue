@@ -30,6 +30,7 @@
     </div>
 </template>
 <script>
+    /* eslint-disable */
     var paperMock = {
         code: '123456',
         title: '九月份职业培训调查',
@@ -114,7 +115,10 @@
         },
         methods: {
             fetchData() {
-                this.paper = paperMock;
+                // this.paper = paperMock;
+                this.$fetch.get('/api/paperDetail',{paperId:this.paperId},json=>{
+                    this.paper = json;
+                })
             },
             getDetail(type, code) {
                 var title = '';

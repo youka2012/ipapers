@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="user-name">
-            <span class="user-name-text">{{nameFlag}}</span>
+            <span class="user-name-text">{{userName}}</span>
         </div>
         <div class="menu-actions">
             <a @click="addPaper" href="javascript:void (0);" class="action-button" title="新建问卷">
@@ -33,17 +33,10 @@
         data(){
             return{
                 userName:'',
-                nameFlag:''
             }
         },
         created() {
-            this.userName = this.$route.params.userName;
-            this.nameFlag = this.$route.params.userName;
-        },
-        watch:{
-            userName(o) {
-                this.nameFlag = o;
-            }
+            this.userName = window.localStorage.getItem('userName');
         },
         methods: {
             addPaper() {

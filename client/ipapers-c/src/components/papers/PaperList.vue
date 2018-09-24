@@ -1,10 +1,8 @@
 <template>
     <div class="list-wrap">
-        <Card v-if="papers.length === 0">
-            <div style="text-align:center">
-                <span>暂无问卷，请点击右侧创建按钮新建</span>
+            <div v-if="papers.length === 0" style="text-align:center;width:100%;padding-left: 35%">
+                <span style="text-align:center;margin:0 auto">暂无问卷，请点击右侧创建按钮新建</span>
             </div>
-        </Card>
         <Timeline>
             <TimelineItem v-for="paper in papers" :key="paper.id" color="orange">
                 <p class="time">
@@ -23,11 +21,11 @@
                            title="查看答题分析">
                             <Icon type="ios-analytics"/>
                         </a>
-                        <a v-if="paper.on" @click="toggleStatus(paper.id)" href="javascript:void (0);"
+                        <a v-if="paper.on" @click="toggleStatus(paper.id,!paper.on)" href="javascript:void (0);"
                            class="action-button" title="点击暂停">
                             <Icon type="ios-pause"/>
                         </a>
-                        <a v-else-if="!paper.on" @click="toggleStatus(paper.id)"
+                        <a v-else-if="!paper.on" @click="toggleStatus(paper.id,!paper.on)"
                            href="javascript:void (0);" class="action-button" title="点击恢复">
                             <Icon type="ios-play"/>
                         </a>
@@ -45,6 +43,7 @@
     </div>
 </template>
 <script>
+    /* eslint-disable */
     var papersMock = [
         {
             id: 'ppp1111',
@@ -106,11 +105,15 @@
             }
         },
         created() {
-            this.papers = papersMock;
+            // this.papers = papersMock;
+            this.$fetch.get('/api/papers',{},json =>{
+                if(json){
+                    this.papers = json;
+                }
+            })
         },
         methods: {
             getDetail(paperId) {
-                console.log(paperId);
                 this.$router.push({
                     name: 'detail',
                     params: {
@@ -127,13 +130,18 @@
                     }
                 });
             },
-            toggleStatus(paperId) {
-                console.log(paperId);
+            toggleStatus(paperId,on) {
                 var index = this.papers.findIndex(function (paper) {
                     return paper.id === paperId;
                 });
-
-                index > -1 && (this.papers[index].on = !this.papers[index].on);
+                if(index !== -1){
+                    this.$fetch.get('/api/setPaperStatus',{paperId,on},res =>{
+                        if(res === 200){
+                            this.papers[index].on = !this.papers[index].on;
+                        }
+                    });
+                }
+                // (index > -1) && (this.papers[index].on = !this.papers[index].on);
             },
             deletePaper(paperId) {
                 this.$Modal.confirm({
@@ -143,13 +151,17 @@
                         var index = this.papers.findIndex(function (paper) {
                             return paper.id === paperId;
                         });
-                        this.papers.splice([index], 1);
-                        this.$Message.info('删除成功');
+                        if(index !== -1){
+                            this.$fetch.get('/api/deletePaper',{paperId},res =>{
+                                if(res === 200){
+                                    this.papers.splice([index], 1);
+                                }
+                            });
+                        }
                     },
                     onCancel: () => {
                     }
                 });
-                console.log(paperId);
             }
         }
     }

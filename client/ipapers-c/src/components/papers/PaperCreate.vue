@@ -193,22 +193,29 @@
             handleSubmit() {
                 this.$Modal.confirm({
                     title: '确认',
-                    content: '<p>确定新建此问卷</p>',
+                    content: '<p>确定新建此问卷?</p>',
                     onOk: () => {
                         this.$refs['paperForm'].validate((valid) => {
                             if (valid) {
                                 this.$Message.success('验证通过!');
+                                for(var i = 0 ;i<this.paper.questions.length;i++){
+                                    this.paper.questions[i]['index'] = i;
+                                }
+                                this.$fetch.post('/api/submitPaper',{paperData:this.paper},res => {
+                                    if(res === 200){
+                                        this.$router.push({
+                                            name:'list',
+                                        });
+                                    }
+                                })
                             } else {
-                                this.$Message.error('验证失败!');
+                                this.$Message.error('数据验证失败,请检查!');
                             }
                         })
                     },
                     onCancel: () => {
                     }
                 });
-                for(var i = 0 ;i<this.paper.questions.length;i++){
-                    this.paper.questions[i]['code'] = i;
-                }
                 console.log(this.paper);
             },
         }

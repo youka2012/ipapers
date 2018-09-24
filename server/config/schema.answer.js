@@ -12,7 +12,7 @@ module.exports = mongoose.model(
     remark: String,
     answers: [
       {
-        code: String,
+        index:Number,
         required: Boolean,
         type: String,
         answer: [String]

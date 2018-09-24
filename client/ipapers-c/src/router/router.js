@@ -16,8 +16,9 @@ var routes = [
     {
         name:'paper',
         path: "/paper",
-        component: Papers, children: [
-            {path: '/', redirect: '/paper/list'},
+        redirect: '/paper/list',
+        component: Papers,
+        children: [
             {name:'list',path: '/paper/list', component: PaperList},
             {name:'create',path: '/paper/create', component: PaperCreate},
             {name:'detail',path: '/paper/detail/:paperId', component: PaperDetail},
