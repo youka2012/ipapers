@@ -10,7 +10,7 @@
             </div>
         </Card>
         <Card class="content-card card-item">
-            <Table v-if="tableColumns" width="100%" height="auto" border :columns="tableColumns" :data="tableData"></Table>
+            <Table v-if="tableColumns" width="auto" height="auto" border :columns="tableColumns" :data="tableData"></Table>
         </Card>
     </div>
 </template>

@@ -7,7 +7,7 @@ import PaperAnalysis from '../components/papers/PaperAnalysis'
 import PaperList from '../components/papers/PaperList'
 
 var routes = [
-    {path: '/', redirect: '/login'},
+    {name:'enter',path: '/',component: Login},
     {
         name:'login',
         path: "/login",

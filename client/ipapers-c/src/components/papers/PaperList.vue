@@ -1,5 +1,10 @@
 <template>
     <div class="list-wrap">
+        <Card v-if="papers.length === 0">
+            <div style="text-align:center">
+                <span>暂无问卷，请点击右侧创建按钮新建</span>
+            </div>
+        </Card>
         <Timeline>
             <TimelineItem v-for="paper in papers" :key="paper.id" color="orange">
                 <p class="time">
@@ -44,6 +49,7 @@
         {
             id: 'ppp1111',
             code: '123456',
+            creator:'大A',
             title: '九月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业培训调查',
             on: true,
             description: '九月份职业培训调查九月份职业培训调查九月份职业培训调查业培训调查业培训调查业培训调查',
@@ -56,6 +62,7 @@
         {
             id: '2222',
             code: '123456',
+            creator:'大A',
             title: '中秋节职业培训调查',
             on: false,
             description: '中秋节职业培训调查中秋节职业培训调查中秋节职业培训调查业培训调查业培训调查业培训调查',
@@ -68,6 +75,7 @@
         {
             id: '3333',
             code: '123456',
+            creator:'大C',
             title: '冬季职业培训调查',
             on: true,
             description: '冬季职业培训调查冬季职业培训调查业培训调查业培训调查业培训调查',
@@ -80,6 +88,7 @@
         {
             id: '4444',
             code: '123456',
+            creator:'大D',
             title: '春节职业培训调查',
             on: true,
             outdated: false,

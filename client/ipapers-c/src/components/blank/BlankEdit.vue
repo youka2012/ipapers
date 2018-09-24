@@ -40,7 +40,7 @@
                 </p>
 
                 <div v-if="question.type === 'SINGLE'">
-                    <RadioGroup v-model="answers[question.code].answer" vertical>
+                    <RadioGroup v-model="answers[question.code].answer[0]" vertical>
                         <Radio v-for="item in question.items" :key="item.index"
                                :label="item.index">
                             <span class="item-index">{{item.index}}</span>
@@ -59,7 +59,7 @@
                     </CheckboxGroup>
                 </div>
                 <div v-else-if="question.type === 'INPUT'">
-                    <Input v-model="answers[question.code].answer" type="textarea" :autosize="true"
+                    <Input v-model="answers[question.code].answer[0]" type="textarea" :autosize="true"
                            placeholder="请输入..."/>
                 </div>
                 <div v-else>
@@ -142,7 +142,7 @@
                     remark:''
                 },
                 answers: [
-                    /*{code:'',required:true,type:'',answer:{}}*/
+                    /*{code:'',required:true,type:'',answer:['',]}*/
                 ],
                 ruleProfile:{
                     number: [
@@ -166,7 +166,7 @@
         created() {
             this.fetchData();
             this.answers = this.paper.questions.map(function (question) {
-                var answer;
+                /*var answer;
                 switch (question.type) {
                     case 'SINGLE':
                         answer = '';
@@ -177,8 +177,8 @@
                     case 'INPUT':
                         answer = '';
                         break;
-                }
-                return {code: question.code, required: question.required,type:question.type, answer: answer};
+                }*/
+                return {code: question.code, required: question.required,type:question.type, answer: []};
             })
         },
         methods: {
@@ -210,7 +210,7 @@
                 //todo check input
                 var reply = Object.assign({},this.profile);
                 reply.answers = this.answers;
-                console.log(reply);
+                console.log(reply.answers[0].answer);
             },
             back() {
                 this.$router.push('/login');
