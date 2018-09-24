@@ -16,8 +16,8 @@ var api = [
         children: [
             {name:'list',path: '/paper/list',api:[
                     {url:'/api/papers',type:'get',_params:{},description:'',response1:[{},],response2:{code:400,msg:'failed'}},
-                    {url:'/api/setPaperStatus',type:'post',_params:{paperId:'p111',status:'ON'},description:'切换一项问卷状态',response1:{code:200,msg:'success'},response2:{code:400,msg:'failed'}},
-                    {url:'/api/deletePaper',type:'post',_params:{paperId:'p111'},description:'删除一项问卷',response1:{code:200,msg:'success'},response2:{code:400,msg:'failed'}},
+                    {url:'/api/setPaperStatus',type:'get',_params:{paperId:'p111',status:'ON'},description:'切换一项问卷状态',response1:{code:200,msg:'success'},response2:{code:400,msg:'failed'}},
+                    {url:'/api/deletePaper',type:'get',_params:{paperId:'p111'},description:'删除一项问卷',response1:{code:200,msg:'success'},response2:{code:400,msg:'failed'}},
                 ],},
             {name:'create',path: '/paper/create',api:[
                     {url:'/api/submitPaper',type:'post',_params:{paperData:{}},description:'提交问卷',response1:{code:200,msg:'success'},response2:{code:400,msg:'failed'}},

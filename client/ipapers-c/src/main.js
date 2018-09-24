@@ -7,6 +7,10 @@ import axios from 'axios';
 //QS是axios库中带的，不需要我们再npm安装一个
 import Qs from 'qs';
 import routes from './router/router'
+import MyFetch from './fetch/MyFetch'
+require('es6-promise').polyfill();
+
+Vue.use(MyFetch);
 
 Vue.prototype.axios = axios;
 Vue.prototype.qs = Qs;

@@ -85,7 +85,7 @@
                 } else if (form === 'loginForm') {
                     this.$router.push({
                         name:'list',
-                        query:{
+                        params:{
                             userName:'userNameA'
                         }
                     });

@@ -69,18 +69,26 @@ app.get("/getChrome32", function(req, res) {
 });
 
 app.get("/enter", function(req, res) {
-  if (!req.query.code) {
-    return utils.createMsg(400);
+  var code = req.query.code;
+  if (!code) {
+    return res.json(utils.createMsg(400));
   }
-  MongoDao.getActivePaperByCode(req.query.code, function(data) {});
+  MongoDao.getActivePaperByCode(code, function(data) {
+    if(!data){
+      res.json(utils.createMsg(400));
+    }else{
+      res.json(data);
+    }
+  });
 });
 
 app.post("/login", function(req, res) {
-  MongoDao.getUserByUserName(req.body.name, function(user) {
+  var userName = req.body.name,userPassword = req.body.password;
+  MongoDao.getUserByUserName(userName, function(user) {
     if (!user) {
       res.json(utils.createMsg(400));
     } else{
-      if (user.password != req.body.password) {
+      if (user.password != userPassword) {
         res.json(utils.createMsg(400));
       } else {
         var token = jwt.sign(user, app.get("superSecret"), {
@@ -128,10 +136,10 @@ apiRoutes.get("/papers", function(req, res) {
   });
 });
 
-apiRoutes.post("/setPaperStatus", function(req, res) {
+apiRoutes.get("/setPaperStatus", function(req, res) {
   var name = req.decoded._doc.name,
-    status = req.body.status,
-    paperId = req.body.paperId;
+    status = req.query.status,
+    paperId = req.query.paperId;
   if (!name || !status || !paperId) {
     return res.json(utils.createMsg(400));
   }else{
@@ -155,9 +163,9 @@ apiRoutes.post("/setPaperStatus", function(req, res) {
   }
 });
 
-apiRoutes.post("/deletePaper", function(req, res) {
+apiRoutes.get("/deletePaper", function(req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.body.paperId;
+  paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
   }else{
@@ -199,9 +207,9 @@ apiRoutes.post("/submitPaper", function(req, res) {
   })
 });
 
-apiRoutes.post("/paperDetail", function(req, res) {
+apiRoutes.get("/paperDetail", function(req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.body.paperId;
+  paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
   }else{
@@ -227,7 +235,7 @@ apiRoutes.post("/paperDetail", function(req, res) {
 
 apiRoutes.get("/paperAnalysis", function(req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.body.paperId;
+  paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
   }else{
@@ -253,8 +261,8 @@ apiRoutes.get("/paperAnalysis", function(req, res) {
 
 apiRoutes.get("/deleteAnswer", function(req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.body.paperId,
-    answerId = req.body.answerId;
+  paperId = req.query.paperId,
+    answerId = req.query.answerId;
   if (!name || !paperId || !answerId) {
     return res.json(utils.createMsg(400));
   }else{

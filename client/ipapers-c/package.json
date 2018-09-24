@@ -9,7 +9,10 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "es6-promise": "^4.2.5",
+    "fetch": "^1.1.0",
     "iview": "^3.1.1",
+    "promise-polyfill": "^8.1.0",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1"
   },
