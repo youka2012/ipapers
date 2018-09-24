@@ -69,35 +69,27 @@ app.get("/getChrome32", function(req, res) {
 });
 
 app.get("/enter", function(req, res) {
-  if(!req.query.code){
-    return utils.createMsg(400,'无效的问卷码')
+  if (!req.query.code) {
+    return utils.createMsg(400);
   }
-  MongoDao.getActivePaperByCode(req.query.code,function(data){
-
-  });
+  MongoDao.getActivePaperByCode(req.query.code, function(data) {});
 });
 
 app.post("/login", function(req, res) {
-  MongoDao.getUserByUserName(req.body.name, function(err, user) {
-    if (err) throw err;
+  MongoDao.getUserByUserName(req.body.name, function(user) {
     if (!user) {
-      res.json({ success: false, message: "未找到授权用户" });
-    } else if (user) {
+      res.json(utils.createMsg(400));
+    } else{
       if (user.password != req.body.password) {
-        res.json({ success: false, message: "用户密码错误" });
+        res.json(utils.createMsg(400));
       } else {
         var token = jwt.sign(user, app.get("superSecret"), {
           expiresIn: 60 * 60 * 24 // 授权时效24小时
         });
-        res.json({
-          success: true,
-          message: "请使用您的授权码",
-          token: token
-        });
+        res.json(Object.assign({ token: token }, utils.createMsg(200)));
       }
     }
   });
-  res.json(utils.createMsg(200));
 });
 
 //  localhost:端口号/api 路径路由定义
@@ -124,75 +116,199 @@ apiRoutes.use(function(req, res, next) {
   }
 });
 
-apiRoutes.get("/papers", function(req, res) {});
+apiRoutes.get("/papers", function(req, res) {
+  if (!req.decoded._doc.name) {
+    return res.json(utils.createMsg(400));
+  }
+  MongoDao.getPapersByUserName(req.decoded._doc.name, function name(data) {
+    if (!data) {
+      return res.json(utils.createMsg(400));
+    }
+    return res.json(data);
+  });
+});
 
-apiRoutes.post("/setPaperStatus", function(req, res) {});
-
-apiRoutes.post("/deletePaper", function(req, res) {});
-
-apiRoutes.post("/submitPaper", function(req, res) {});
-
-apiRoutes.post("/paperDetail", function(req, res) {});
-
-apiRoutes.get("/paperAnalysis", function(req, res) {});
-
-apiRoutes.post("/submitAnswer", function(req, res) {});
-
-/* //获取所有用户数据
-apiRoutes.get("/users", function(req, res) {
-    console.log(req.decoded._doc.name);
-    User.find({}, function(err, users) {
-      res.json(users);
+apiRoutes.post("/setPaperStatus", function(req, res) {
+  var name = req.decoded._doc.name,
+    status = req.body.status,
+    paperId = req.body.paperId;
+  if (!name || !status || !paperId) {
+    return res.json(utils.createMsg(400));
+  }else{
+    MongoDao.getPaperIdsByUserName(name, function name(ids) {
+      if (
+        !ids ||
+        !ids.some(id => {
+          return id === paperId;
+        })
+      ) {
+        return res.json(utils.createMsg(400));
+      }
+      MongoDao.setPaperStatusByPaperId(paperId,status,function(result){
+        if(result && result === 1){
+          return res.json(utils.createMsg(200));
+        }else{
+          return res.json(utils.createMsg(400));
+        }
+      })
     });
-  }); */
+  }
+});
+
+apiRoutes.post("/deletePaper", function(req, res) {
+  var name = req.decoded._doc.name,
+  paperId = req.body.paperId;
+  if (!name || !paperId) {
+    return res.json(utils.createMsg(400));
+  }else{
+    MongoDao.getPaperIdsByUserName(name, function name(ids) {
+      if (
+        !ids ||
+        !ids.some(id => {
+          return id === paperId;
+        })
+      ) {
+        return res.json(utils.createMsg(400));
+      }
+      MongoDao.deletePaperByPaperId(paperId,function(result){
+        if(result && result === 1){
+          return res.json(utils.createMsg(200));
+        }else{
+          return res.json(utils.createMsg(400));
+        }
+      })
+    });
+  }
+});
+
+apiRoutes.post("/submitPaper", function(req, res) {
+  var name = req.decoded._doc.name,
+  paperData = req.body.paperData;
+  if (!name || !paperData) {
+    return res.json(utils.createMsg(400));
+  }
+  paperData.creator = name;
+  paperData.code = utils.generateMixed(12);
+  paperData.createDate = utils.formatDate(new Date(),'yyyy-MM-dd');
+  MongoDao.addPaper(paperData,function(result) {
+    if(result && result === 1){
+      return res.json(Object.assign({paperCode:paperCode},utils.createMsg(200)));
+    }else{
+      return res.json(utils.createMsg(400));
+    }
+  })
+});
+
+apiRoutes.post("/paperDetail", function(req, res) {
+  var name = req.decoded._doc.name,
+  paperId = req.body.paperId;
+  if (!name || !paperId) {
+    return res.json(utils.createMsg(400));
+  }else{
+    MongoDao.getPaperIdsByUserName(name, function name(ids) {
+      if (
+        !ids ||
+        !ids.some(id => {
+          return id === paperId;
+        })
+      ) {
+        return res.json(utils.createMsg(400));
+      }
+      MongoDao.getPaperDetailByPaperId(paperId,function(result){
+        if(!result){
+          return res.json(utils.createMsg(400));
+        }else{
+          return res.json(result);
+        }
+      })
+    });
+  }
+});
+
+apiRoutes.get("/paperAnalysis", function(req, res) {
+  var name = req.decoded._doc.name,
+  paperId = req.body.paperId;
+  if (!name || !paperId) {
+    return res.json(utils.createMsg(400));
+  }else{
+    MongoDao.getPaperIdsByUserName(name, function name(ids) {
+      if (
+        !ids ||
+        !ids.some(id => {
+          return id === paperId;
+        })
+      ) {
+        return res.json(utils.createMsg(400));
+      }
+      MongoDao.getPaperAnswersByPaperId(paperId,function(result){
+        if(!result){
+          return res.json(utils.createMsg(400));
+        }else{
+          return res.json(result);
+        }
+      })
+    });
+  }
+});
+
+apiRoutes.get("/deleteAnswer", function(req, res) {
+  var name = req.decoded._doc.name,
+  paperId = req.body.paperId,
+    answerId = req.body.answerId;
+  if (!name || !paperId || !answerId) {
+    return res.json(utils.createMsg(400));
+  }else{
+    MongoDao.getPaperIdsByUserName(name, function name(ids) {
+      if (
+        !ids ||
+        !ids.some(id => {
+          return id === paperId;
+        })
+      ) {
+        return res.json(utils.createMsg(400));
+      }
+      MongoDao.getPaperAnswersByPaperId(paperId,function(ans){
+        if(!ans || !ids.some( an => {
+            return an.paperId === paperId;
+          })){
+          return res.json(utils.createMsg(400));
+        }else{
+          MongoDao.deleteAnswerByAnswerId(paperId,function(result){
+            if(result && result === 1){
+              return res.json(utils.createMsg(200));
+            }else{
+              return res.json(utils.createMsg(400));
+            }
+          })
+        }
+      })
+     
+    });
+  }
+});
+
+app.post("/submitAnswer", function(req, res) {
+  var answer = req.body.answer;
+  if(!answer){
+    return res.json(utils.createMsg(400));
+  }
+  MongoDao.getPaperIdByPaperCode(answer.paperCode,function(paperId){
+    if(!paperId){
+      return res.json(utils.createMsg(400));
+    }else{
+      MongoDao.addAnswer(answer,function(result){
+        if(result && result === 1){
+          return res.json(utils.createMsg(200));
+        }else{
+          return res.json(utils.createMsg(400));
+        }
+      });
+    }
+  })
+});
+
 
 // 注册API路由
 app.use("/api", apiRoutes);
-
-/* // 用户授权路径，返回JWT 的 Token 验证用户名密码
-app.post("/authenticate", function(req, res) {
-    console.log(req.body.name);
-  User.findOne(
-    {
-      name: req.body.name
-    },
-    function(err, user) {
-      if (err) throw err;
-      if (!user) {
-        res.json({ success: false, message: "未找到授权用户" });
-      } else if (user) {
-        if (user.password != req.body.password) {
-          res.json({ success: false, message: "用户密码错误" });
-        } else {
-          var token = jwt.sign(user, app.get("superSecret"), {
-            expiresIn: 60 * 60 * 24 // 授权时效24小时
-          });
-          res.json({
-            success: true,
-            message: "请使用您的授权码",
-            token: token
-          });
-        }
-      }
-    }
-  );
-});
-// 在steup 路径下简单用户数据写入操作
-app.post("/setup", function(req, res) {
-  if (req.body.name && req.body.password) {
-    var nick = new User({
-      name: req.body.name,
-      password: req.body.password,
-      type: "user"
-    });
-    nick.save(function(err) {
-      if (err) throw err;
-      console.log("用户存储成功");
-      res.json({ success: true });
-    });
-  } else {
-    res.json({ success: false, msg: "错误参数" });
-  }
-}); */
 
 app.listen(config.network.port);

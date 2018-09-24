@@ -8,6 +8,7 @@ module.exports = mongoose.model(
     number: String,
     name: String,
     department: String,
+    date:String,
     remark: String,
     answers: [
       {

@@ -6,12 +6,22 @@ var Answer = require("./config/schema.answer");
 module.exports = {
   getActivePaperByCode(_code, _callBack) {
     Paper.findOne({ code: _code, status: "ON" }, function(err, data) {
-      _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+        }
     });
   },
   getUserByUserName(_userName, _callBack) {
+      console.log(_userName);
     User.findOne({ name: _userName }, function(err, data) {
-      _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+            console.log(data)
+        }
     });
   },
   getPapersByUserName(_userName, _callBack) {
@@ -19,13 +29,21 @@ module.exports = {
       { acount: _userName },
       "code acount status title dateLine createDate creator contact description expect",
       function(err, data) {
-        _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+        }
       }
     );
   },
   getPaperIdsByUserName(_userName, _callBack) {
     Paper.find({ acount: _userName }, "_id", function(err, data) {
-      _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+        }
     });
   },
   setPaperStatusByPaperId(_paperId, _status, _callBack) {
@@ -60,12 +78,20 @@ module.exports = {
   },
   getPaperDetailByPaperId(_paperId, _callBack) {
     Paper.findOne({ _id: _paperId }, function(err, data) {
-      _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+        }
     });
   },
   getPaperAnswersByPaperId(_paperId, _callBack) {
     Answer.find({ _id: _paperId }, function(err, data) {
-      _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+        }
     });
   },
   deleteAnswerByAnswerId(_answerId, _callBack) {
@@ -80,7 +106,11 @@ module.exports = {
   },
   getPaperIdByPaperCode(_paperCode,_callBack) {
     Paper.findOne({ code: _paperCode },'_id', function(err, data) {
-        _callBack(data);
+        if(err){
+            _callBack(null);
+        }else{
+            _callBack(data);
+        }
       });
   },
   addAnswer(_json, _callBack) {
