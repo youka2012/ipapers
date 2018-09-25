@@ -47,7 +47,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 // 使用 morgan 将请求日志输出到控制台
 app.use(morgan("dev"));
-app.use(express.static(path.join(__dirname, "../client/ipapers-c/dist")));
+app.use(express.static(path.join(__dirname, "../client/dist")));
 app.use(express.static(path.join(__dirname, "/ie")));
 
 //API跟路径返回内容

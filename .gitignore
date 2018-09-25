@@ -22,3 +22,4 @@ yarn-error.log*
 /client/ipapers-c/dist
 /server/dist
 /server/dist
+/client/dist
