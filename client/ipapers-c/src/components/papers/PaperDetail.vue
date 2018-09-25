@@ -97,7 +97,7 @@
         },
         created() {
             this.fetchData();
-            this.answers = this.paper.questions.map(function (question) {
+            this.paper.questions && (this.answers = this.paper.questions.map(function (question) {
                 var answer;
                 switch (question.item) {
                     case 'SINGLE':
@@ -111,11 +111,12 @@
                         break;
                 }
                 return {code: question.code, required: question.required, answer: answer};
-            });
+            }));
         },
         methods: {
             fetchData() {
                 // this.paper = paperMock;
+                console.log(this.paperId)
                 this.$fetch.get('/api/paperDetail',{paperId:this.paperId},json=>{
                     this.paper = json;
                 })

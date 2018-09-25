@@ -35,6 +35,19 @@ var api = [
         name:'blank',
         path: "/blank",
         api:[
+            {
+                url: '/api/getPaperByCode',
+                type: 'get',
+                _params: {
+                    paperId: 'p111'
+                },
+                description: '获取问卷详情ByCode',
+                response1: {},
+                response2: {
+                    code: 400,
+                    msg: 'failed'
+                }
+            },
             {url:'submitAnswer',type:'post',_params:{answer:{}},description:'提交答案',response1:{code:200,msg:'success'},response2:{code:400,msg:'failed'}},
         ],
     }

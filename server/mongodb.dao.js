@@ -1,3 +1,5 @@
+var ObjectId = require('mongoose').Types.ObjectId;
+
 // 获得mongo实例
 var User = require("./config/schema.user");
 var Paper = require("./config/schema.paper");
@@ -5,7 +7,7 @@ var Answer = require("./config/schema.answer");
 
 module.exports = {
   getActivePaperByCode(_code, _callBack) {
-    Paper.findOne({ code: _code, on: true }, function(err, data) {
+    Paper.findOne({ code: _code, status: true }, function(err, data) {
         if(err){
             _callBack(null);
         }else{
@@ -14,20 +16,18 @@ module.exports = {
     });
   },
   getUserByUserName(_userName, _callBack) {
-  console.log(_userName);
     User.findOne({ name: _userName }, function(err, data) {
         if(err){
             _callBack(null);
         }else{
             _callBack(data);
-            console.log(data);
         }
     });
   },
   getPapersByUserName(_userName, _callBack) {
     Paper.find(
       { acount: _userName },
-      "code acount on title dateLine createDate creator contact description expect",
+      "code acount status title dateLine createDate creator contact description expect",
       function(err, data) {
         if(err){
             _callBack(null);
@@ -47,8 +47,10 @@ module.exports = {
     });
   },
   setPaperStatusByPaperId(_paperId, _status, _callBack) {
-    var conditions = { _id: _paperId };
-    var update = { $set: { on: _status } };
+    var conditions = {
+      _id: ObjectId(_paperId)
+    };
+    var update = { $set: { status: _status } };
     Paper.update(conditions, update, function(error) {
       if (error) {
         _callBack(0);
@@ -58,8 +60,10 @@ module.exports = {
     });
   },
   deletePaperByPaperId(_paperId, _callBack) {
-    var conditions = { _id: _paperId };
-    Paper.remove(conditions, function(error) {
+    var conditions = {
+      _id: ObjectId(_paperId)
+    };
+    Paper.remove(conditions, function (error) {
       if (error) {
         _callBack(0);
       } else {
@@ -77,7 +81,12 @@ module.exports = {
     });
   },
   getPaperDetailByPaperId(_paperId, _callBack) {
-    Paper.findOne({ _id: _paperId }, function(err, data) {
+      console.log(_paperId);
+      console.log(_paperId);
+      console.log(_paperId);
+    Paper.findOne({
+          _id: ObjectId(_paperId)
+        }, function (err, data) {
         if(err){
             _callBack(null);
         }else{
@@ -86,7 +95,9 @@ module.exports = {
     });
   },
   getPaperAnswersByPaperId(_paperId, _callBack) {
-    Answer.find({ _id: _paperId }, function(err, data) {
+    Answer.find({
+          _id: ObjectId(_paperId)
+        }, function (err, data) {
         if(err){
             _callBack(null);
         }else{
@@ -95,8 +106,10 @@ module.exports = {
     });
   },
   deleteAnswerByAnswerId(_answerId, _callBack) {
-    var conditions = { _id: _answerId };
-    Answer.remove(conditions, function(error) {
+    var conditions = {
+      _id: ObjectId(_answerId)
+    };
+    Answer.remove(conditions, function (error) {
       if (error) {
         _callBack(0);
       } else {
@@ -105,7 +118,7 @@ module.exports = {
     });
   },
   getPaperIdByPaperCode(_paperCode,_callBack) {
-    Paper.findOne({ code: _paperCode },'_id', function(err, data) {
+    Paper.findOne({ code: _paperCode },_id, function(err, data) {
         if(err){
             _callBack(null);
         }else{

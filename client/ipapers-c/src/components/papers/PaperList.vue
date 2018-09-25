@@ -1,10 +1,7 @@
 <template>
     <div class="list-wrap">
-            <div v-if="papers.length === 0" style="text-align:center;width:100%;padding-left: 35%">
-                <span style="text-align:center;margin:0 auto">暂无问卷，请点击右侧创建按钮新建</span>
-            </div>
         <Timeline>
-            <TimelineItem v-for="paper in papers" :key="paper.id" color="orange">
+            <TimelineItem v-for="paper in papers" :key="paper._id" color="orange">
                 <p class="time">
                     <span>{{paper.title}}</span>
                     <span class="actions">
@@ -13,29 +10,30 @@
                             <Icon type="md-information-circle"/>
                         </a>
                         </Tooltip>
-                        <a @click="getDetail(paper.id)" href="javascript:void (0);" class="action-button"
+                        <a @click="getDetail(paper._id)" href="javascript:void (0);" class="action-button"
                            title="查看问卷详细">
                             <Icon type="ios-book"/>
                         </a>
-                        <a @click="analyzeAnswers(paper.id)" href="javascript:void (0);" class="action-button"
+                        <a @click="analyzeAnswers(paper._id)" href="javascript:void (0);" class="action-button"
                            title="查看答题分析">
                             <Icon type="ios-analytics"/>
                         </a>
-                        <a v-if="paper.on" @click="toggleStatus(paper.id,!paper.on)" href="javascript:void (0);"
+                        <a v-if="paper.status" @click="toggleStatus(paper._id,!paper.status)"
+                           href="javascript:void (0);"
                            class="action-button" title="点击暂停">
                             <Icon type="ios-pause"/>
                         </a>
-                        <a v-else-if="!paper.on" @click="toggleStatus(paper.id,!paper.on)"
+                        <a v-else-if="!paper.status" @click="toggleStatus(paper._id,!paper.status)"
                            href="javascript:void (0);" class="action-button" title="点击恢复">
                             <Icon type="ios-play"/>
                         </a>
-                        <a @click="deletePaper(paper.id)" class="action-button" title="删除问卷">
+                        <a @click="deletePaper(paper._id)" class="action-button" title="删除问卷">
                            <Icon type="ios-close-circle"/>
                         </a>
                     </span>
                 </p>
                 <p class="content">
-                    <span>{{'创建日期：'+paper.date}}</span><span>|</span><span>{{'截至：'+paper.dateLine}}</span><span>|</span><span>已填：{{paper.counter}}</span><span>|</span><span>应填：{{paper.expect}}</span>
+                    <span>{{'问卷码：'+paper.code}}</span><span>{{'创建日期：'+paper.createDate}}</span><span>|</span><span>{{'截至：'+paper.dateLine}}</span><span>|</span><span>应填：{{paper.expect}}</span>
                 </p>
             </TimelineItem>
 
@@ -46,53 +44,53 @@
     /* eslint-disable */
     var papersMock = [
         {
-            id: 'ppp1111',
+            _id: 'ppp1111',
             code: '123456',
-            creator:'大A',
+            creator: '大A',
             title: '九月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业培训调查',
-            on: true,
+            status: true,
             description: '九月份职业培训调查九月份职业培训调查九月份职业培训调查业培训调查业培训调查业培训调查',
-            date: '2018.9.22',
+            createDate: '2018.9.22',
             dateLine: '2018.10.8',
             outdated: false,
             expect: 66,
             counter: 30,
         },
         {
-            id: '2222',
+            _id: '2222',
             code: '123456',
-            creator:'大A',
+            creator: '大A',
             title: '中秋节职业培训调查',
-            on: false,
+            status: false,
             description: '中秋节职业培训调查中秋节职业培训调查中秋节职业培训调查业培训调查业培训调查业培训调查',
-            date: '2018.9.17',
+            createDate: '2018.9.17',
             dateLine: '2018.10.8',
             outdated: false,
             expect: 66,
             counter: 15,
         },
         {
-            id: '3333',
+            _id: '3333',
             code: '123456',
-            creator:'大C',
+            creator: '大C',
             title: '冬季职业培训调查',
-            on: true,
+            status: true,
             description: '冬季职业培训调查冬季职业培训调查业培训调查业培训调查业培训调查',
-            date: '2018.9.14',
+            createDate: '2018.9.14',
             dateLine: '2018.10.8',
             outdated: true,
             expect: 66,
             counter: 10,
         },
         {
-            id: '4444',
+            _id: '4444',
             code: '123456',
-            creator:'大D',
+            creator: '大D',
             title: '春节职业培训调查',
-            on: true,
+            status: true,
             outdated: false,
             description: '春节春节春节春节春节春节业培训调查业培训调查业培训调查',
-            date: '2018.9.11',
+            createDate: '2018.9.11',
             dateLine: '2018.10.8',
             expect: 66,
             counter: 10,
@@ -106,8 +104,9 @@
         },
         created() {
             // this.papers = papersMock;
-            this.$fetch.get('/api/papers',{},json =>{
-                if(json){
+            this.$fetch.get('/api/papers', {}, json => {
+                console.log('/api/papers', json)
+                if (json) {
                     this.papers = json;
                 }
             })
@@ -130,14 +129,14 @@
                     }
                 });
             },
-            toggleStatus(paperId,on) {
+            toggleStatus(paperId, status) {
                 var index = this.papers.findIndex(function (paper) {
-                    return paper.id === paperId;
+                    return paper._id === paperId;
                 });
-                if(index !== -1){
-                    this.$fetch.get('/api/setPaperStatus',{paperId,on},res =>{
-                        if(res === 200){
-                            this.papers[index].on = !this.papers[index].on;
+                if (index !== -1) {
+                    this.$fetch.get('/api/setPaperStatus', {paperId, status}, res => {
+                        if (res === 200) {
+                            this.papers[index].status = !this.papers[index].status;
                         }
                     });
                 }
@@ -149,12 +148,12 @@
                     content: '<p>确定删除此问卷</p>',
                     onOk: () => {
                         var index = this.papers.findIndex(function (paper) {
-                            return paper.id === paperId;
+                            return paper._id === paperId;
                         });
-                        if(index !== -1){
-                            this.$fetch.get('/api/deletePaper',{paperId},res =>{
-                                if(res === 200){
-                                    this.papers.splice([index], 1);
+                        if (index !== -1) {
+                            this.$fetch.get('/api/deletePaper', {paperId}, res => {
+                                if (res === 200) {
+                                    this.papers.splice(index, 1);
                                 }
                             });
                         }
@@ -197,7 +196,7 @@
     }
 
     .content {
-        padding-left: 5px;
+        margin-top:8px;
         font-size: 18px;
         font-weight: bold;
         line-height: 20px;

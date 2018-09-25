@@ -1,5 +1,10 @@
 import 'whatwg-fetch'
-import {Message} from 'iview';
+import {Message,LoadingBar} from 'iview';
+LoadingBar.config({
+    color: '#5cb85c',
+    failedColor: '#f0ad4e',
+    height: 8
+});
 
 // var baseUrl = 'http://localhost:9080';
 var baseUrl = '';
@@ -16,16 +21,20 @@ function commonHandle(json) {
     if (json.code && ([200, 201,300, 400, 401, 500].indexOf(json.code) !== -1) && json.msg) {
         switch (json.code) {
             case 200:
+                LoadingBar.finish();
                 Message.success('恭喜您，操作成功！');
                 break;
             case 300:
+                LoadingBar.error();
                 Message.warning('嗯...出错了！');
                 break;
             case 400:
+                LoadingBar.error();
                 Message.error('额...操作失败！');
                 break;
             case 500:
-                Message.success('登陆过期，请重新登陆');
+                LoadingBar.error();
+                Message.warning('登陆过期，请重新登陆');
                 window.location.href = baseUrl + '/login';
                 break;
         }
@@ -37,6 +46,7 @@ function commonHandle(json) {
             return 400;
         }
     } else {
+        LoadingBar.finish();
         return true;
     }
 }
@@ -53,6 +63,7 @@ const MyFetch = {
             }
             _url += '?' + object2String(_params);
         }
+        LoadingBar.start();
         fetch(_url, {
             method: 'GET',
             credentials: 'include'
@@ -80,9 +91,9 @@ const MyFetch = {
             method: 'POST',
             headers: new Headers({
                 'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded' // 指定提交方式为表单提交
+                'Content-Type': 'application/json' // 指定提交方式为表单提交
             }),
-            body: new URLSearchParams(_params).toString()
+            body: JSON.stringify(_params)
         }).then((res) => {
             return res.json();
         }).then((json) => {

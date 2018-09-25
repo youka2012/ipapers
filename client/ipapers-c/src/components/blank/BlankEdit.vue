@@ -13,34 +13,34 @@
         <Card class="profile-card card-item">
             <Form ref="profileForm" :model="profile" :rules="ruleProfile" :label-width="100" inline>
                 <FormItem label="工号" prop="number">
-                    <Input v-model="profile.number" placeholder="Enter your number" clearable></Input>
+                    <Input v-model="profile.number" placeholder="Enter your number" clearable/>
                 </FormItem>
                 <FormItem label="姓名" prop="name">
-                    <Input v-model="profile.name" placeholder="Enter your name" clearable></Input>
+                    <Input v-model="profile.name" placeholder="Enter your name" clearable/>
                 </FormItem>
                 <FormItem label="部门" prop="department">
-                    <Input v-model="profile.department" placeholder="Enter your department" clearable></Input>
+                    <Input v-model="profile.department" placeholder="Enter your department" clearable/>
                 </FormItem>
                 <FormItem label="联系方式" prop="contact">
-                    <Input v-model="profile.contact" placeholder="Enter your contact" clearable></Input>
+                    <Input v-model="profile.contact" placeholder="Enter your contact" clearable/>
                 </FormItem>
                 <FormItem label="备注" prop="remark" class="remark-input">
                     <Input v-model="profile.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}"
-                           placeholder="Enter the remark..." clearable></Input>
+                           placeholder="Enter the remark..." clearable/>
                 </FormItem>
             </Form>
         </Card>
 
-        <div class="question-card" v-for="question in paper.questions" :key="question.code">
+        <div class="question-card" v-for="question in paper.questions" :key="question.index">
             <Card :bordered="false">
                 <p slot="title">
                     <Tooltip content="点击查看详情" placement="right">
-                        <span @click="getDetail('Q',question.code)" class="item-title">{{(Number(question.code)+1)+' . '+question.title}}</span>
+                        <span @click="getDetail('Q',question.index)" class="item-title">{{(Number(question.index)+1)+' . '+question.title}}</span>
                     </Tooltip>
                 </p>
 
                 <div v-if="question.type === 'SINGLE'">
-                    <RadioGroup v-model="answers[question.code].answer[0]" vertical>
+                    <RadioGroup v-model="answers[question.index].answer[0]" vertical>
                         <Radio v-for="item in question.items" :key="item.index"
                                :label="item.index">
                             <span class="item-index">{{item.index}}</span>
@@ -49,7 +49,7 @@
                     </RadioGroup>
                 </div>
                 <div v-else-if="question.type === 'MULTIPLE'">
-                    <CheckboxGroup v-model="answers[question.code].answer">
+                    <CheckboxGroup v-model="answers[question.index].answer">
                         <p v-for="item in question.items" :key="item.index">
                             <Checkbox :label="item.index">
                                 <span class="item-index">{{item.index}}</span>
@@ -59,7 +59,7 @@
                     </CheckboxGroup>
                 </div>
                 <div v-else-if="question.type === 'INPUT'">
-                    <Input v-model="answers[question.code].answer[0]" type="textarea" :autosize="true"
+                    <Input v-model="answers[question.index].answer[0]" type="textarea" :autosize="true"
                            placeholder="请输入..."/>
                 </div>
                 <div v-else>
@@ -76,60 +76,6 @@
     </div>
 </template>
 <script>
-    var paperMock = {
-        code: '123456',
-        title: '九月份职业培训调查',
-        date: '2018.10.8',
-        dateLine: '2018.10.8',
-        creator:'machao',
-        contact:'19911122333',
-        description: '职业培训调查',
-        questions: [
-            {
-                code: '0',
-                title: '第一个问题是单选',
-                required: true,
-                type: 'SINGLE',
-                description: '第1个问题',
-                items: [
-                    {
-                        index: 'A', content: '选项aaaaaaaaaaaaa'
-                    },
-                    {
-                        index: 'B', content: '选项aaaaaaaaaaaaabbbbbb'
-                    },
-                    {
-                        index: 'C', content: '选项aaaaaaaaaaaaaccccc'
-                    },
-                    {
-                        index: 'D',
-                        content: 'ddd dd dddd dd ddd dddddddd dddd dddddd'
-                    },
-                ]
-            },
-            {
-                code: '1',
-                title: '第二个问题是多选',
-                required: true,
-                type: 'MULTIPLE',
-                description: '第2个问题',
-                items: [
-                    {index: 'A', content: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'},
-                    {index: 'B', content: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'},
-                    {index: 'C', content: 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'},
-                    {index: 'D', content: 'dddddddddddddddddddddddddddddddddddddddddddddddddddd'},
-                ]
-            },
-            {
-                code: '2',
-                title: '第三个问题是填空',
-                required: true,
-                type: 'INPUT',
-                description: '第3个问题',
-            },
-        ]
-    };
-
     export default {
         data() {
             return {
@@ -142,7 +88,7 @@
                     remark:''
                 },
                 answers: [
-                    /*{code:'',required:true,type:'',answer:['',]}*/
+                    /*{index:n,required:true,type:'',answer:['',]}*/
                 ],
                 ruleProfile:{
                     number: [
@@ -178,24 +124,27 @@
                         answer = '';
                         break;
                 }*/
-                return {code: question.code, required: question.required,type:question.type, answer: []};
+                return {index: question.index, required: question.required,type:question.type, answer: []};
             })
         },
         methods: {
             fetchData() {
-                this.paper = paperMock;
+                // this.paper = paperMock;
+                this.$fetch.get('/getPaperByCode',{paperCode: this.paperCode},json=>{
+                    this.paper = json;
+                })
             },
-            getDetail(type, code) {
+            getDetail(type, index) {
                 var title = '';
                 var content = '';
                 if (type === 'P') {
-                    title = code + '  ' + this.paper.title;
+                    title = index + '  ' + this.paper.title;
                     content = this.paper.description;
                 } else if (type === 'Q') {
                     var currentQuestion = this.paper.questions.filter(function (question) {
-                        return question.code === code;
+                        return question.index === index;
                     })[0];
-                    title = (Number(code) + 1) + ' . ' + currentQuestion.title;
+                    title = (Number(index) + 1) + ' . ' + currentQuestion.title;
                     content = currentQuestion.description;
                     console.log(currentQuestion);
                 }

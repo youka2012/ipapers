@@ -17,6 +17,7 @@
 <script>
     /* eslint-disable */
     var paperMock = {
+        _id:'',
         code: '123456',
         title: '九月份职业培训调查',
         date: '2018.8.8',
@@ -26,48 +27,48 @@
         description: '职业培训调查',
         answerList: [
             {
-                id:'1111a',
+                _id:'1111a',
                 number: '1001',
                 name: 'jack',
                 department: 'dev',
                 remark: 'qq',
                 answers: [
                     {
-                        code: '0',
+                        index:0,
                         type: 'SINGLE',
                         answer: 'A',
                     },
                     {
-                        code: '1',
+                        index:0,
                         type: 'MULTIPLE',
                         answer: ['A', 'B', 'D'],
                     },
                     {
-                        code: '2',
+                        index: 2,
                         type: 'INPUT',
                         answer: 'WWWWWOOOOOWWWW11111',
                     },
                 ]
             },
             {
-                id:'222a',
+                _id:'222a',
                 number: '2002',
                 name: 'pppit',
                 department: 'sup',
                 remark: 'wwwqq',
                 answers: [
                     {
-                        code: '0',
+                        index:0,
                         type: 'SINGLE',
                         answer: 'C',
                     },
                     {
-                        code: '1',
+                        index:1,
                         type: 'MULTIPLE',
                         answer: ['B', 'C'],
                     },
                     {
-                        code: '2',
+                        index:2,
                         type: 'INPUT',
                         answer: 'QQQQQQQQ22222',
                     },
@@ -76,7 +77,7 @@
         ],
         questions: [
             {
-                code: '0',
+                index: 0,
                 title: '第一个问题是单选',
                 required: true,
                 type: 'SINGLE',
@@ -98,7 +99,7 @@
                 ]
             },
             {
-                code: '1',
+                index: 1,
                 title: '第二个问题是多选',
                 required: true,
                 type: 'MULTIPLE',
@@ -111,7 +112,7 @@
                 ]
             },
             {
-                code: '2',
+                index: 2,
                 title: '第三个问题是填空',
                 required: true,
                 type: 'INPUT',
@@ -179,10 +180,10 @@
         },
         created() {
             this.fetchData();
-            this.paper.questions.forEach(question => {
+            this.paper.questions&&this.paper.questions.forEach(question => {
                 this.tableColumns.push({
-                    title: '第' + (Number(question.code) + 1) + '题',
-                    key: question.code,
+                    title: '第' + (Number(question.index) + 1) + '题',
+                    key: question.index,
                     width: 150,
                     align:'center',
                 });
@@ -196,7 +197,7 @@
                 };
 
                 answerObj.answers.forEach(function (answer) {
-                    column[answer.code] = answer.answer.toString();
+                    column[answer.index] = answer.answer.toString();
                 });
                 this.tableData.push(column);
             });
@@ -212,7 +213,7 @@
                 var answerId = this.paper.answerList[index].id;
                 this.$Modal.confirm({
                     title: '确认',
-                    content: '<p>确定删除此问卷</p>',
+                    content: '<p>确定删除此回卷</p>',
                     onOk: () => {
                         var index = this.papers.findIndex(function (paper) {
                             return paper.id === paperId;
@@ -220,7 +221,7 @@
                         if(index !== -1){
                             this.$fetch.get('/api/deleteAnswer',{answerId},res =>{
                                 if(res === 200){
-                                    this.papers.answerList.splice([index], 1);
+                                    this.papers.answerList.splice(index, 1);
                                 }
                             });
                         }

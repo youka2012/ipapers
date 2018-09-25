@@ -6,7 +6,7 @@
                     <Input v-model="paper.title" placeholder="Enter the title" clearable></Input>
                 </FormItem>
                 <FormItem label="截至" prop="dateLine">
-                    <DatePicker type="date" placeholder="Select date" v-model="paper.dateLine"></DatePicker>
+                    <DatePicker type="date" format="yyyy-MM-dd" placeholder="Select date" v-model="paper.dateLine"></DatePicker>
                 </FormItem>
                 <FormItem label="创建者" prop="creator">
                     <Input v-model="paper.creator" placeholder="Enter the creator" clearable></Input>
@@ -87,18 +87,18 @@
     </div>
 </template>
 <script>
-    export default {
-        data() {
-            return {
-                paper: {
-                    title: '',
-                    dateLine: '',
-                    creator: '',
-                    contact: '',
-                    description: '',
-                    expect: '',
-                    questions: [
-                        /*{
+export default {
+  data() {
+    return {
+      paper: {
+        title: "",
+        dateLine: "",
+        creator: "",
+        contact: "",
+        description: "",
+        expect: "",
+        questions: [
+          /*{
                             index:123,
                             code:'',
                             title:'',
@@ -111,182 +111,238 @@
                                 }
                             ]
                         }*/
-                    ]
-                },
-                rulePaper: {
-                    title: [
-                        {required: true, message: 'The title cannot be empty', trigger: 'blur'}
-                    ],
-                    dateLine: [
-                        {required: false}
-                    ],
-                    contact: [
-                        {required: true, message: 'Please input your contact', trigger: 'blur'}
-                    ],
-                    creator: [
-                        {required: true, message: 'Please input the creator', trigger: 'blur'}
-                    ],
-                    description: [
-                        {required: false}
-                    ],
-                    expect: [
-                        {required: true, message: 'Please input the creator', trigger: 'blur'},
-                        // {type: 'number', message: 'Incorrect number format', trigger: 'change'}
-                    ],
-                },
-                questionItemList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-                itemsSize: 1,
-                newQuestion: {
-                    code:'',
-                    title: '',
-                    type: 'SINGLE',
-                    required: true,
-                    items: [
-                        {
-                            index: 'A',
-                            content: '',
-                        }
-                    ]
-                },
-                ruleQuestion: {
-                    title: [
-                        {required: true, message: 'The title cannot be empty', trigger: 'blur'}
-                    ],
-                }
-            }
-        },
-        watch: {
-            itemsSize: function (newSize, oldSize) {
-                var d = 0;
-                if (newSize > oldSize) {
-                    d = newSize - oldSize;
-                    for (var k = 0; k < d; k++) {
-                        this.newQuestion.items.push({
-                            index: this.questionItemList[oldSize + k],
-                            content: '',
-                        })
-                    }
-                } else if (newSize < oldSize) {
-                    d = oldSize - newSize;
-                    for (var j = 0; j < d; j++) {
-                        this.newQuestion.items.pop();
-                    }
-                }
-            }
-        },
-        methods: {
-            addQuestion() {
-                this.$refs['questionForm'].validate((valid) => {
-                    if (valid) {
-                        //todo 检验
-                        this.$Message.success('验证通过!');
-                        this.paper.questions.push(JSON.parse(JSON.stringify(this.newQuestion)));
-                        this.itemsSize = 1;
-                        this.newQuestion.title = '';
-                        this.newQuestion.required = true;
-                        this.newQuestion.items[0].content = '';
-                    } else {
-                        this.$Message.error('验证失败!');
-                    }
-                })
-            },
-            handleSubmit() {
-                this.$Modal.confirm({
-                    title: '确认',
-                    content: '<p>确定新建此问卷?</p>',
-                    onOk: () => {
-                        this.$refs['paperForm'].validate((valid) => {
-                            if (valid) {
-                                this.$Message.success('验证通过!');
-                                for(var i = 0 ;i<this.paper.questions.length;i++){
-                                    this.paper.questions[i]['index'] = i;
-                                }
-                                this.$fetch.post('/api/submitPaper',{paperData:this.paper},res => {
-                                    if(res === 200){
-                                        this.$router.push({
-                                            name:'list',
-                                        });
-                                    }
-                                })
-                            } else {
-                                this.$Message.error('数据验证失败,请检查!');
-                            }
-                        })
-                    },
-                    onCancel: () => {
-                    }
-                });
-                console.log(this.paper);
-            },
+        ]
+      },
+      rulePaper: {
+        title: [
+          {
+            required: true,
+            message: "The title cannot be empty",
+            trigger: "blur"
+          }
+        ],
+        dateLine: [{ required: false }],
+        contact: [
+          {
+            required: true,
+            message: "Please input your contact",
+            trigger: "blur"
+          }
+        ],
+        creator: [
+          {
+            required: true,
+            message: "Please input the creator",
+            trigger: "blur"
+          }
+        ],
+        description: [{ required: false }],
+        expect: [
+          {
+            required: true,
+            message: "Please input the creator",
+            trigger: "blur"
+          }
+          // {type: 'number', message: 'Incorrect number format', trigger: 'change'}
+        ]
+      },
+      questionItemList: [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T"
+      ],
+      itemsSize: 1,
+      newQuestion: {
+        // code:'',
+        title: "",
+        type: "SINGLE",
+        required: true,
+        items: [
+          {
+            index: "A",
+            content: ""
+          }
+        ]
+      },
+      ruleQuestion: {
+        title: [
+          {
+            required: true,
+            message: "The title cannot be empty",
+            trigger: "blur"
+          }
+        ]
+      }
+    };
+  },
+  watch: {
+    itemsSize: function(newSize, oldSize) {
+      var d = 0;
+      if (newSize > oldSize) {
+        d = newSize - oldSize;
+        for (var k = 0; k < d; k++) {
+          this.newQuestion.items.push({
+            index: this.questionItemList[oldSize + k],
+            content: ""
+          });
         }
+      } else if (newSize < oldSize) {
+        d = oldSize - newSize;
+        for (var j = 0; j < d; j++) {
+          this.newQuestion.items.pop();
+        }
+      }
     }
+  },
+  methods: {
+    addQuestion() {
+      this.$refs["questionForm"].validate(valid => {
+        if (valid) {
+          //todo 检验
+          this.$Message.success("验证通过!");
+          this.paper.questions.push(
+            JSON.parse(JSON.stringify(this.newQuestion))
+          );
+          this.itemsSize = 1;
+          this.newQuestion.title = "";
+          this.newQuestion.required = true;
+          this.newQuestion.items[0].content = "";
+        } else {
+          this.$Message.error("验证失败!");
+        }
+      });
+    },
+    handleSubmit() {
+      this.$Modal.confirm({
+        title: "确认",
+        content: "<p>确定新建此问卷?</p>",
+        onOk: () => {
+          this.$refs["paperForm"].validate(valid => {
+            if (valid) {
+              // this.$Message.success('验证通过!');
+              for (var i = 0; i < this.paper.questions.length; i++) {
+                this.paper.questions[i]["index"] = i;
+              }
+              var dateLine = this.paper.dateLine;
+              var dateLineStr =
+                dateLine.getFullYear() +
+                "-" +
+                dateLine.getMonth() +
+                "-" +
+                dateLine.getDate();
+              this.paper.dateLine = dateLineStr;
+              this.$fetch.post(
+                "/api/submitPaper",
+                { paperData: this.paper },
+                res => {
+                  if (res === 200) {
+                    this.$Notice.open({
+                      title: "这里是您创建的问卷码" + res.paperCode,
+                      desc: res.paperCode,
+                      duration: 0
+                    });
+                    this.$router.push({
+                      name: "list"
+                    });
+                  }
+                }
+              );
+            } else {
+              this.$Message.error("数据验证失败,请检查!");
+            }
+          });
+        },
+        onCancel: () => {}
+      });
+      console.log(this.paper);
+    }
+  }
+};
 </script>
 <style scoped>
-    .ivu-date-picker {
-        display: block;
-        width: 216px;
-    }
+.ivu-date-picker {
+  display: block;
+  width: 216px;
+}
 
-    .ivu-form-item-content {
-        width: 180px !important;
-    }
+.ivu-form-item-content {
+  width: 180px !important;
+}
 
-    .question-list {
-        text-align: left !important;
-        background-color: aliceblue;
-    }
+.question-list {
+  text-align: left !important;
+  background-color: aliceblue;
+}
 
-    .required-checkbox {
-        width: 120px !important;
-    }
+.required-checkbox {
+  width: 120px !important;
+}
 
-    .wrap-create {
-        height: 100%;
-        width: 100%;
-        background-color: rgb(238, 238, 238);
-        text-align: left;
-    }
+.wrap-create {
+  height: 100%;
+  width: 100%;
+  background-color: rgb(238, 238, 238);
+  text-align: left;
+  padding-top: 8px;
+}
 
-    .card-item {
-        padding: 10px 6px;
-        margin-bottom: 8px;
-    }
+.card-item {
+  padding: 10px 6px;
+  margin-bottom: 8px;
+}
 
-    .question-card-title {
-        text-align: center;
-    }
+.question-card-title {
+  text-align: center;
+}
 
-    .action-button {
-        font-size: 28px;
-    }
+.action-button {
+  font-size: 28px;
+}
 
-    .question-item-group {
-        margin: 30px 50px;
-    }
+.question-item-group {
+  margin: 30px 50px;
+}
 
-    .question-item-index {
-        width: 8%;
-        color: rosybrown;
-        padding-left: 1px;
-    }
+.question-item-index {
+  width: 8%;
+  color: rosybrown;
+  padding-left: 1px;
+}
 
-    .question-item-input {
-        width: 92%;
-        padding-left: 8px;
-    }
+.question-item-input {
+  width: 92%;
+  padding-left: 8px;
+}
 
-    .item-index {
-        margin-left: 6px;
-        color: rosybrown;
-        font-size: 18px;
-        font-weight: 600;
-    }
+.item-index {
+  margin-left: 6px;
+  color: rosybrown;
+  font-size: 18px;
+  font-weight: 600;
+}
 
-    .item-content {
-        width: 400px;
-        margin-left: 6px;
-        font-size: 16px;
-        word-wrap: break-word;
-        word-break: break-all;
-    }
+.item-content {
+  width: 400px;
+  margin-left: 6px;
+  font-size: 16px;
+  word-wrap: break-word;
+  word-break: break-all;
+}
 </style>

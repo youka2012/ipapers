@@ -16,7 +16,7 @@ const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 
 //引入工具类
-var utils = require("./utils");
+var utils = require("./common/utils");
 
 // mongo数据库设置
 mongoose.connect(config.database);
@@ -27,7 +27,7 @@ app.set("superSecret", config.jwtsecret);
 //开启gzip压缩
 app.use(
   compression({
-    filter: function(req, res) {
+    filter: function (req, res) {
       if (
         req.headers["x-no-compression"] ||
         req.path.match(/(^\/api*)|(^\/enter)|(^\/login)/g)
@@ -41,80 +41,107 @@ app.use(
 );
 
 // 使用 body parser 将post参数及URL参数可以通过 req.body或req.query 拿到请求参数
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 // 使用 morgan 将请求日志输出到控制台
 app.use(morgan("dev"));
-app.use(express.static(path.join(__dirname, "/dist")));
+app.use(express.static(path.join(__dirname, "../client/ipapers-c/dist")));
 app.use(express.static(path.join(__dirname, "/ie")));
 
 //API跟路径返回内容
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.sendfile("index.html");
 });
 
-app.get("/ie", function(req, res) {
+app.get("/ie", function (req, res) {
   res.sendfile("ie/ie.html");
 });
 
-app.get("/ie_img", function(req, res) {
+app.get("/ie_img", function (req, res) {
   res.sendfile("ie/ie.jpg");
 });
 
-app.get("/getChrome64", function(req, res) {
+app.get("/getChrome64", function (req, res) {
   res.sendfile("ie/ChromeSetup_64.exe");
 });
-app.get("/getChrome32", function(req, res) {
+app.get("/getChrome32", function (req, res) {
   res.sendfile("ie/ChromeSetup_32.exe");
 });
 
-app.get("/enter", function(req, res) {
-  var code = req.query.code;
+app.get("/enter", function (req, res) {
+  var code = req.query.paperCode;
   if (!code) {
     return res.json(utils.createMsg(400));
   }
-  MongoDao.getActivePaperByCode(code, function(data) {
-    if(!data){
+  MongoDao.getActivePaperByCode(code, function (data) {
+    if (!data) {
       res.json(utils.createMsg(400));
-    }else{
+    } else {
       res.json(data);
     }
   });
 });
 
-app.post("/login", function(req, res) {
-  var userName = req.body.name,userPassword = req.body.password;
-  MongoDao.getUserByUserName(userName, function(user) {
+app.post("/login", function (req, res) {
+  var userName = req.body.name,
+    userPassword = req.body.password;
+  MongoDao.getUserByUserName(userName, function (user) {
     if (!user) {
       res.json(utils.createMsg(400));
-    } else{
+    } else {
       if (user.password != userPassword) {
         res.json(utils.createMsg(400));
       } else {
         var token = jwt.sign(user, app.get("superSecret"), {
           expiresIn: 60 * 60 * 24 // 授权时效24小时
         });
-        res.json(Object.assign({ token: token }, utils.createMsg(200)));
+        res.json(Object.assign({
+          token: token
+        }, utils.createMsg(200)));
       }
     }
   });
 });
 
+//getPAaperByCode
+app.get("/getPaperByCode", function (req, res) {
+  var name = req.decoded._doc.name,
+    paperCode = req.query.paperCode;
+  if (!name || !paperCode) {
+    return res.json(utils.createMsg(400));
+  } else {
+    MongoDao.getPaperIdByPaperCode(paperCode, function (paperId) {
+      if (paperId == null) {
+        return res.json(utils.createMsg(400));
+      }
+      MongoDao.getPaperDetailByPaperId(paperId.id, function (result) {
+        if (!result) {
+          return res.json(utils.createMsg(400));
+        } else {
+          return res.json(result);
+        }
+      })
+    });
+  }
+});
+
 //  localhost:端口号/api 路径路由定义
 var apiRoutes = express.Router();
-apiRoutes.use(function(req, res, next) {
+apiRoutes.use(function (req, res, next) {
   // 拿取token 数据 按照自己传递方式写
   var token =
     req.body.token || req.query.token || req.headers["x-access-token"];
   if (token) {
     // 解码 token (验证 secret 和检查有效期（exp）)
-    jwt.verify(token, app.get("superSecret"), function(err, decoded) {
+    jwt.verify(token, app.get("superSecret"), function (err, decoded) {
       if (err) {
         return res.json(utils.createMsg(500));
       } else {
         // 如果验证通过，在req中写入解密结果
         req.decoded = decoded;
-        //console.log(decoded)  ;
+        // console.dir('decoded:  ' + decoded);
         next(); //继续下一步路由
       }
     });
@@ -124,7 +151,7 @@ apiRoutes.use(function(req, res, next) {
   }
 });
 
-apiRoutes.get("/papers", function(req, res) {
+apiRoutes.get("/papers", function (req, res) {
   if (!req.decoded._doc.name) {
     return res.json(utils.createMsg(400));
   }
@@ -136,26 +163,24 @@ apiRoutes.get("/papers", function(req, res) {
   });
 });
 
-apiRoutes.get("/setPaperStatus", function(req, res) {
+apiRoutes.get("/setPaperStatus", function (req, res) {
   var name = req.decoded._doc.name,
-    status = req.query.status,
+    status = req.query.status == 'true',
     paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
-  }else{
+  } else {
     MongoDao.getPaperIdsByUserName(name, function name(ids) {
       if (
         !ids ||
-        !ids.some(id => {
-          return id === paperId;
-        })
+        !ids.some(ido => ido.id === paperId)
       ) {
         return res.json(utils.createMsg(400));
       }
-      MongoDao.setPaperStatusByPaperId(paperId,status,function(result){
-        if(result && result === 1){
+      MongoDao.setPaperStatusByPaperId(paperId, status, function (result) {
+        if (result && result === 1) {
           return res.json(utils.createMsg(200));
-        }else{
+        } else {
           return res.json(utils.createMsg(400));
         }
       })
@@ -163,25 +188,23 @@ apiRoutes.get("/setPaperStatus", function(req, res) {
   }
 });
 
-apiRoutes.get("/deletePaper", function(req, res) {
+apiRoutes.get("/deletePaper", function (req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.query.paperId;
+    paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
-  }else{
+  } else {
     MongoDao.getPaperIdsByUserName(name, function name(ids) {
       if (
         !ids ||
-        !ids.some(id => {
-          return id === paperId;
-        })
+        !ids.some(ido => ido.id === paperId)
       ) {
         return res.json(utils.createMsg(400));
       }
-      MongoDao.deletePaperByPaperId(paperId,function(result){
-        if(result && result === 1){
+      MongoDao.deletePaperByPaperId(paperId, function (result) {
+        if (result && result === 1) {
           return res.json(utils.createMsg(200));
-        }else{
+        } else {
           return res.json(utils.createMsg(400));
         }
       })
@@ -189,43 +212,46 @@ apiRoutes.get("/deletePaper", function(req, res) {
   }
 });
 
-apiRoutes.post("/submitPaper", function(req, res) {
+apiRoutes.post("/submitPaper", function (req, res) {
   var name = req.decoded._doc.name,
-  paperData = req.body.paperData;
+    paperData = req.body.paperData;
+    console.log("paperData.questions=  " + JSON.stringify(paperData.questions));
   if (!name || !paperData) {
     return res.json(utils.createMsg(400));
   }
-  paperData.creator = name;
+  paperData.acount = name;
+  paperData.status = true;
   paperData.code = utils.generateMixed(12);
-  paperData.createDate = utils.formatDate(new Date(),'yyyy-MM-dd');
-  MongoDao.addPaper(paperData,function(result) {
-    if(result && result === 1){
-      return res.json(Object.assign({paperCode:paperCode},utils.createMsg(200)));
-    }else{
+  paperData.createDate = utils.formatDate(new Date(), 'yyyy-MM-dd');
+  console.log("paperData222=  " + JSON.stringify(paperData));
+  MongoDao.addPaper(paperData, function (result) {
+    if (result && result === 1) {
+      return res.json(Object.assign({
+        paperCode: paperData.code
+      }, utils.createMsg(200)));
+    } else {
       return res.json(utils.createMsg(400));
     }
   })
 });
 
-apiRoutes.get("/paperDetail", function(req, res) {
+apiRoutes.get("/paperDetail", function (req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.query.paperId;
+    paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
-  }else{
+  } else {
     MongoDao.getPaperIdsByUserName(name, function name(ids) {
       if (
         !ids ||
-        !ids.some(id => {
-          return id === paperId;
-        })
+        !ids.some(ido => ido.id === paperId)
       ) {
         return res.json(utils.createMsg(400));
       }
-      MongoDao.getPaperDetailByPaperId(paperId,function(result){
-        if(!result){
+      MongoDao.getPaperDetailByPaperId(paperId, function (result) {
+        if (!result) {
           return res.json(utils.createMsg(400));
-        }else{
+        } else {
           return res.json(result);
         }
       })
@@ -233,81 +259,88 @@ apiRoutes.get("/paperDetail", function(req, res) {
   }
 });
 
-apiRoutes.get("/paperAnalysis", function(req, res) {
+apiRoutes.get("/paperAnalysis", function (req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.query.paperId;
+    paperId = req.query.paperId;
   if (!name || !paperId) {
     return res.json(utils.createMsg(400));
-  }else{
+  } else {
     MongoDao.getPaperIdsByUserName(name, function name(ids) {
       if (
         !ids ||
-        !ids.some(id => {
-          return id === paperId;
-        })
+        !ids.some(ido => ido.id === paperId)
       ) {
         return res.json(utils.createMsg(400));
       }
-      MongoDao.getPaperAnswersByPaperId(paperId,function(result){
-        if(!result){
-          return res.json(utils.createMsg(400));
-        }else{
-          return res.json(result);
+      MongoDao.getPaperDetailByPaperId(paperId, function (result) {
+        if (!result) {
+          res.json(utils.createMsg(400));
+        } else {
+          MongoDao.getPaperAnswersByPaperId(paperId, function (resultAl) {
+            if (!resultAl) {
+              result.answerList = [];
+            } else {
+              result.answerList = resultAl;
+            }
+              res.json(result);
+          })
         }
       })
+
     });
   }
 });
 
-apiRoutes.get("/deleteAnswer", function(req, res) {
+apiRoutes.get("/deleteAnswer", function (req, res) {
   var name = req.decoded._doc.name,
-  paperId = req.query.paperId,
+    paperId = req.query.paperId,
     answerId = req.query.answerId;
   if (!name || !paperId || !answerId) {
     return res.json(utils.createMsg(400));
-  }else{
+  } else {
     MongoDao.getPaperIdsByUserName(name, function name(ids) {
       if (
         !ids ||
-        !ids.some(id => {
-          return id === paperId;
-        })
+        !ids.some(ido => ido.id === paperId)
       ) {
         return res.json(utils.createMsg(400));
       }
-      MongoDao.getPaperAnswersByPaperId(paperId,function(ans){
-        if(!ans || !ids.some( an => {
+      MongoDao.getPaperAnswersByPaperId(paperId, function (ans) {
+        if (!ans || !ids.some(an => {
             return an.paperId === paperId;
-          })){
+          })) {
           return res.json(utils.createMsg(400));
-        }else{
-          MongoDao.deleteAnswerByAnswerId(paperId,function(result){
-            if(result && result === 1){
+        } else {
+          MongoDao.deleteAnswerByAnswerId(paperId, function (result) {
+            if (result && result === 1) {
               return res.json(utils.createMsg(200));
-            }else{
+            } else {
               return res.json(utils.createMsg(400));
             }
           })
         }
       })
-     
+
     });
   }
 });
 
-app.post("/submitAnswer", function(req, res) {
+
+
+app.post("/submitAnswer", function (req, res) {
   var answer = req.body.answer;
-  if(!answer){
+  if (!answer) {
     return res.json(utils.createMsg(400));
   }
-  MongoDao.getPaperIdByPaperCode(answer.paperCode,function(paperId){
-    if(!paperId){
+  MongoDao.getPaperIdByPaperCode(answer.paperCode, function (paperId) {
+    if (!paperId) {
       return res.json(utils.createMsg(400));
-    }else{
-      MongoDao.addAnswer(answer,function(result){
-        if(result && result === 1){
+    } else {
+      answer.paperId = paperId;
+      MongoDao.addAnswer(answer, function (result) {
+        if (result && result === 1) {
           return res.json(utils.createMsg(200));
-        }else{
+        } else {
           return res.json(utils.createMsg(400));
         }
       });

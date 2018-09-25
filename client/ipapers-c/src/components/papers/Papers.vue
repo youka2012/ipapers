@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="main-wrap">
         <div class="user-name">
             <span class="user-name-text">{{userName}}</span>
         </div>
@@ -56,6 +56,8 @@
                     title: '确认',
                     content: '<p>确定退出登陆？</p>',
                     onOk: () => {
+                        window.localStorage.setItem('token',null);
+                        window.localStorage.setItem('userName',null);
                         this.$router.push('/login');
                     },
                     onCancel: () => {
@@ -66,6 +68,9 @@
     }
 </script>
 <style scoped>
+    .main-wrap{
+        margin-top: 8px;
+    }
     .menu-wrap {
         color: black;
         background-color: #f8f8f9;

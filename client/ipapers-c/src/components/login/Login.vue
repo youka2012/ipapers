@@ -1,6 +1,9 @@
 <template>
     <div class="login-wrap">
         <Card :bordered="false" class="card-login">
+             <p slot="title">
+                    <span>iPaper问卷系统</span>
+                </p>
             <Form v-if="!isLoginForm" ref="codeForm" :model="codeData" :rules="ruleCodeForm" key="codeForm"
                   class="login-form">
                 <FormItem prop="code">
@@ -77,23 +80,38 @@
         methods: {
             onEnter: function (form) {
                 if (form === 'codeForm') {
-                    this.$router.push({
-                        name:'blank',
-                        params:{
-                            paperCode:"q1111"
-                        }
-                    });
-                } else if (form === 'loginForm') {
-                    this.$fetch.post('/login',{name:this.loginData.account,password:this.loginData.password},json => {
-                        if(json&&json.token){
-                            window.localStorage.setItem('token',json.token);
-                            window.localStorage.setItem('userName',this.loginData.account);
-                            this.$router.push({
-                                name:'list',
+                    this.$refs[form].validate((valid) => {
+                        if (valid) {
+                            this.$fetch.get('/enter',{paperCode:this.codeData.code},res => {
+                                if(res){
+                                    this.$router.push({
+                                        name:'blank',
+                                        params:{
+                                            paperCode:this.codeData.code
+                                        }
+                                    });
+                                }
                             });
+                        } else {
+                            this.$Message.error('Fail!');
                         }
-                    });
-
+                    })
+                } else if (form === 'loginForm') {
+                    this.$refs[form].validate((valid) => {
+                        if (valid) {
+                            this.$fetch.post('/login',{name:this.loginData.account,password:this.loginData.password},json => {
+                                if(json&&json.token){
+                                    window.localStorage.setItem('token',json.token);
+                                    window.localStorage.setItem('userName',this.loginData.account);
+                                    this.$router.push({
+                                        name:'list',
+                                    });
+                                }
+                            });
+                        } else {
+                            this.$Message.error('Fail!');
+                        }
+                    })
                 } else {
                     return null;
                 }
