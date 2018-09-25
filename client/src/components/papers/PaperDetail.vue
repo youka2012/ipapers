@@ -1,12 +1,17 @@
 <template>
     <div class="detail-wrap">
         <Card class="title-card">
+            <p slot="title" class="title-text">
+                <span>问卷详情</span>
+            </p>
+        </Card>
+        <Card class="title-card">
             <div style="text-align:center">
                 <Tooltip content="点击查看详情" placement="right">
                     <h2 @click="getDetail('P',paper.code)" class="item-title">{{this.paper.title}}</h2>
                 </Tooltip>
                 <h4>{{'问卷码: '+this.paper.code+'    截至:' + paper.dateLine}}</h4>
-                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.date+'   联系方式:' +paper.contact}}</h4>
+                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.createDate+'   联系方式:' +paper.contact}}</h4>
             </div>
         </Card>
         <Card class="card-item">
@@ -30,61 +35,6 @@
     </div>
 </template>
 <script>
-    /* eslint-disable */
-    var paperMock = {
-        code: '123456',
-        title: '九月份职业培训调查',
-        date:'2018.8.8',
-        dateLine: '2018.10.8',
-        creator:'machao',
-        contact:'19911122333',
-        description: '职业培训调查',
-        questions: [
-            {
-                code: '0',
-                title: '第一个问题是单选',
-                required: true,
-                type: 'SINGLE',
-                description: '第1个问题',
-                items: [
-                    {
-                        index: 'A', content: '选项aaaaaaaaaaaaa'
-                    },
-                    {
-                        index: 'B', content: '选项aaaaaaaaaaaaabbbbbb'
-                    },
-                    {
-                        index: 'C', content: '选项aaaaaaaaaaaaaccccc'
-                    },
-                    {
-                        index: 'D',
-                        content: 'ddd dd dddd dd ddd dddddddd dddd dddddd'
-                    },
-                ]
-            },
-            {
-                code: '1',
-                title: '第二个问题是多选',
-                required: true,
-                type: 'MULTIPLE',
-                description: '第2个问题',
-                items: [
-                    {index: 'A', content: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'},
-                    {index: 'B', content: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'},
-                    {index: 'C', content: 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'},
-                    {index: 'D', content: 'dddddddddddddddddddddddddddddddddddddddddddddddddddd'},
-                ]
-            },
-            {
-                code: '2',
-                title: '第三个问题是填空',
-                required: true,
-                type: 'INPUT',
-                description: '第3个问题',
-            },
-        ]
-    };
-
     export default {
         data() {
             return {
@@ -96,29 +46,30 @@
             }
         },
         created() {
-            this.fetchData();
-            this.paper.questions && (this.answers = this.paper.questions.map(function (question) {
-                var answer;
-                switch (question.item) {
-                    case 'SINGLE':
-                        answer = '';
-                        break;
-                    case 'MULTIPLE':
-                        answer = [];
-                        break;
-                    case 'INPUT':
-                        answer = '';
-                        break;
-                }
-                return {code: question.code, required: question.required, answer: answer};
-            }));
+            this.fetchData(() => {
+                this.paper.questions && (this.answers = this.paper.questions.map(function (question) {
+                    var answer;
+                    switch (question.item) {
+                        case 'SINGLE':
+                            answer = '';
+                            break;
+                        case 'MULTIPLE':
+                            answer = [];
+                            break;
+                        case 'INPUT':
+                            answer = '';
+                            break;
+                    }
+                    return {code: question.code, required: question.required, answer: answer};
+                }));
+            });
         },
         methods: {
-            fetchData() {
+            fetchData(_callBack) {
                 // this.paper = paperMock;
-                console.log(this.paperId)
                 this.$fetch.get('/api/paperDetail',{paperId:this.paperId},json=>{
                     this.paper = json;
+                    _callBack();
                 })
             },
             getDetail(type, code) {
@@ -133,7 +84,6 @@
                     })[0];
                     title = (Number(code) + 1) + ' . ' + currentQuestion.title;
                     content = currentQuestion.description;
-                    console.log(currentQuestion);
                 }
                 this.$Modal.confirm({
                     title: title,
@@ -166,7 +116,12 @@
     }
 
     .title-card {
-        padding: 20px;
+        text-align: center;
+        font-size: large;
+    }
+
+    .title-text {
+        font-size: 18px;
     }
 
     .question-card {

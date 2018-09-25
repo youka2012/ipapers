@@ -40,12 +40,17 @@ function commonHandle(json) {
         }
         if(json.token){
             return true;
+        }else if(json.paperCode){
+            return true;
         }else if(json.code === 200){
             return 200;
         }else{
             return 400;
         }
-    } else {
+    } else if(json && typeof json === 'object'){
+        LoadingBar.finish();
+        return true;
+    } else{
         LoadingBar.finish();
         return true;
     }

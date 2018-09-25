@@ -1,4 +1,4 @@
-var ObjectId = require('mongoose').Types.ObjectId;
+var ObjectId = require("mongoose").Types.ObjectId;
 
 // 获得mongo实例
 var User = require("./config/schema.user");
@@ -8,20 +8,20 @@ var Answer = require("./config/schema.answer");
 module.exports = {
   getActivePaperByCode(_code, _callBack) {
     Paper.findOne({ code: _code, status: true }, function(err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
-        }
+      if (err) {
+        _callBack(null);
+      } else {
+        _callBack(data);
+      }
     });
   },
   getUserByUserName(_userName, _callBack) {
     User.findOne({ name: _userName }, function(err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
-        }
+      if (err) {
+        _callBack(null);
+      } else {
+        _callBack(data);
+      }
     });
   },
   getPapersByUserName(_userName, _callBack) {
@@ -29,21 +29,21 @@ module.exports = {
       { acount: _userName },
       "code acount status title dateLine createDate creator contact description expect",
       function(err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
+        if (err) {
+          _callBack(null);
+        } else {
+          _callBack(data);
         }
       }
     );
   },
   getPaperIdsByUserName(_userName, _callBack) {
     Paper.find({ acount: _userName }, "_id", function(err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
-        }
+      if (err) {
+        _callBack(null);
+      } else {
+        _callBack(data);
+      }
     });
   },
   setPaperStatusByPaperId(_paperId, _status, _callBack) {
@@ -63,7 +63,7 @@ module.exports = {
     var conditions = {
       _id: ObjectId(_paperId)
     };
-    Paper.remove(conditions, function (error) {
+    Paper.remove(conditions, function(error) {
       if (error) {
         _callBack(0);
       } else {
@@ -81,35 +81,38 @@ module.exports = {
     });
   },
   getPaperDetailByPaperId(_paperId, _callBack) {
-      console.log(_paperId);
-      console.log(_paperId);
-      console.log(_paperId);
-    Paper.findOne({
-          _id: ObjectId(_paperId)
-        }, function (err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
+    Paper.findOne(
+      {
+        _id: ObjectId(_paperId)
+      },
+      function(err, data) {
+        if (err) {
+          _callBack(null);
+        } else {
+          _callBack(data);
         }
-    });
+      }
+    );
   },
   getPaperAnswersByPaperId(_paperId, _callBack) {
-    Answer.find({
-          _id: ObjectId(_paperId)
-        }, function (err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
+    Answer.find(
+      {
+        paperId: _paperId
+      },
+      function(err, data) {
+        if (err) {
+          _callBack(null);
+        } else {
+          _callBack(data);
         }
-    });
+      }
+    );
   },
   deleteAnswerByAnswerId(_answerId, _callBack) {
     var conditions = {
       _id: ObjectId(_answerId)
     };
-    Answer.remove(conditions, function (error) {
+    Answer.remove(conditions, function(error) {
       if (error) {
         _callBack(0);
       } else {
@@ -117,22 +120,22 @@ module.exports = {
       }
     });
   },
-  getPaperIdByPaperCode(_paperCode,_callBack) {
-    Paper.findOne({ code: _paperCode },_id, function(err, data) {
-        if(err){
-            _callBack(null);
-        }else{
-            _callBack(data);
-        }
-      });
+  getPaperIdByPaperCode(_paperCode, _callBack) {
+    Paper.findOne({ code: _paperCode, status: true }, function(err, data) {
+      if (err) {
+        _callBack(null);
+      } else {
+        _callBack(data);
+      }
+    });
   },
   addAnswer(_json, _callBack) {
     Answer.create(_json, function(error, doc) {
-        if (error) {
-          _callBack(0);
-        } else {
-          _callBack(1);
-        }
-      });
+      if (error) {
+        _callBack(0);
+      } else {
+        _callBack(1);
+      }
+    });
   }
 };

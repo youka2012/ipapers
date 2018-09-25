@@ -1,12 +1,17 @@
 <template>
     <div class="analysis-wrap">
+        <Card class="title-card">
+            <p slot="title" class="title-text">
+                <span>答卷分析</span>
+            </p>
+        </Card>
         <Card class="title-card card-item">
             <div style="text-align:center">
                 <Tooltip content="点击查看详情" placement="right">
                     <h2 @click="getDetail('P',paper.code)" class="item-title">{{this.paper.title}}</h2>
                 </Tooltip>
                 <h4>{{'问卷码: '+this.paper.code+' 截至:' + paper.dateLine}}</h4>
-                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.date+' 联系方式:' +paper.contact}}</h4>
+                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.createDate+' 联系方式:' +paper.contact}}</h4>
             </div>
         </Card>
         <Card class="content-card card-item">
@@ -15,111 +20,7 @@
     </div>
 </template>
 <script>
-    /* eslint-disable */
-    var paperMock = {
-        _id:'',
-        code: '123456',
-        title: '九月份职业培训调查',
-        date: '2018.8.8',
-        dateLine: '2018.10.8',
-        creator: 'machao',
-        contact: '19911122333',
-        description: '职业培训调查',
-        answerList: [
-            {
-                _id:'1111a',
-                number: '1001',
-                name: 'jack',
-                department: 'dev',
-                remark: 'qq',
-                answers: [
-                    {
-                        index:0,
-                        type: 'SINGLE',
-                        answer: 'A',
-                    },
-                    {
-                        index:0,
-                        type: 'MULTIPLE',
-                        answer: ['A', 'B', 'D'],
-                    },
-                    {
-                        index: 2,
-                        type: 'INPUT',
-                        answer: 'WWWWWOOOOOWWWW11111',
-                    },
-                ]
-            },
-            {
-                _id:'222a',
-                number: '2002',
-                name: 'pppit',
-                department: 'sup',
-                remark: 'wwwqq',
-                answers: [
-                    {
-                        index:0,
-                        type: 'SINGLE',
-                        answer: 'C',
-                    },
-                    {
-                        index:1,
-                        type: 'MULTIPLE',
-                        answer: ['B', 'C'],
-                    },
-                    {
-                        index:2,
-                        type: 'INPUT',
-                        answer: 'QQQQQQQQ22222',
-                    },
-                ]
-            },
-        ],
-        questions: [
-            {
-                index: 0,
-                title: '第一个问题是单选',
-                required: true,
-                type: 'SINGLE',
-                description: '第1个问题',
-                items: [
-                    {
-                        index: 'A', content: '选项aaaaaaaaaaaaa'
-                    },
-                    {
-                        index: 'B', content: '选项aaaaaaaaaaaaabbbbbb'
-                    },
-                    {
-                        index: 'C', content: '选项aaaaaaaaaaaaaccccc'
-                    },
-                    {
-                        index: 'D',
-                        content: 'ddd dd dddd dd ddd dddddddd dddd dddddd'
-                    },
-                ]
-            },
-            {
-                index: 1,
-                title: '第二个问题是多选',
-                required: true,
-                type: 'MULTIPLE',
-                description: '第2个问题',
-                items: [
-                    {index: 'A', content: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'},
-                    {index: 'B', content: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'},
-                    {index: 'C', content: 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'},
-                    {index: 'D', content: 'dddddddddddddddddddddddddddddddddddddddddddddddddddd'},
-                ]
-            },
-            {
-                index: 2,
-                title: '第三个问题是填空',
-                required: true,
-                type: 'INPUT',
-                description: '第3个问题',
-            },
-        ]
-    };
+
     export default {
         data() {
             return {
@@ -141,7 +42,7 @@
                                     },
                                     on:{
                                         click: () => {
-                                            this.deleteItem(params)
+                                            this.deleteItem(params.index)
                                         }
                                     }
                                 }, '[DEL]')
@@ -179,49 +80,54 @@
             }
         },
         created() {
-            this.fetchData();
-            this.paper.questions&&this.paper.questions.forEach(question => {
-                this.tableColumns.push({
-                    title: '第' + (Number(question.index) + 1) + '题',
-                    key: question.index,
-                    width: 150,
-                    align:'center',
+            this.fetchData(() => {
+                this.paper.questions&&this.paper.questions.forEach(question => {
+                    this.tableColumns.push({
+                        title: '第' + (Number(question.index) + 1) + '题',
+                        key: question.index,
+                        width: 150,
+                        align:'center',
+                    });
                 });
-            });
-            this.paper.answerList.forEach(answerObj => {
-                var column = {
-                    number: answerObj.number,
-                    name: answerObj.name,
-                    department: answerObj.department,
-                    remark: answerObj.remark,
-                };
-
-                answerObj.answers.forEach(function (answer) {
-                    column[answer.index] = answer.answer.toString();
-                });
-                this.tableData.push(column);
+                var answerList = this.paper.answerList;
+                if(answerList && Object.prototype.toString.call(answerList) === '[object Array]'){
+                    answerList.forEach(answerObj => {
+                        var column = {
+                            number: answerObj.number,
+                            name: answerObj.name,
+                            department: answerObj.department,
+                            remark: answerObj.remark,
+                        };
+                        answerObj.answers.forEach(function (answer) {
+                            column[answer.index] = answer.answer.toString();
+                        });
+                        this.tableData.push(column);
+                    });
+                }
             });
         },
         methods: {
-            fetchData() {
+            fetchData(_callBack) {
                 // this.paper = paperMock;
                 this.$fetch.get('/api/paperAnalysis',{paperId:this.paperId},json=>{
                     this.paper = json;
+                    _callBack();
                 })
             },
             deleteItem(index){
-                var answerId = this.paper.answerList[index].id;
+                var answerId = this.paper.answerList[index]._id;
                 this.$Modal.confirm({
                     title: '确认',
                     content: '<p>确定删除此回卷</p>',
                     onOk: () => {
-                        var index = this.papers.findIndex(function (paper) {
-                            return paper.id === paperId;
+                        var indexA = this.paper.answerList.findIndex(function (anobj) {
+                            return anobj._id === answerId;
                         });
-                        if(index !== -1){
-                            this.$fetch.get('/api/deleteAnswer',{answerId},res =>{
+                        if(indexA !== -1){
+                            this.$fetch.get('/api/deleteAnswer',{answerId,paperId:this.paperId},res =>{
                                 if(res === 200){
-                                    this.papers.answerList.splice(index, 1);
+                                    this.paper.answerList.splice(indexA, 1);
+                                    this.tableData.splice(indexA, 1);
                                 }
                             });
                         }
@@ -234,5 +140,12 @@
     }
 </script>
 <style scoped>
+    .title-card{
+        text-align: center;
+        font-size: large;
+    }
 
+    .title-text {
+        font-size: 18px;
+    }
 </style>

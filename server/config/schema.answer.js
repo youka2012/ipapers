@@ -8,7 +8,7 @@ module.exports = mongoose.model(
     number: String, //填表人工号
     name: String, //姓名
     department: String,
-    date: String, //填表日期
+    submitDate: String, //填表日期
     remark: String, //备注信息
     answers: [new Schema({
       index: Number, //题号，0->

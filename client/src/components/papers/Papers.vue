@@ -77,25 +77,26 @@
     }
 
     .user-name {
-        width: 180px;
-        height: 80px;
+        width: auto;
+        height: 60px;
         /*border:20px solid #a1a1a1;*/
         border-radius: 60px;
         background-color: #555;
         color: #fff;
         position: fixed;
-        top:-40px;
-        right: 0;
+        top:-30px;
+        right: 6px;
         line-height: 40px;
         text-align:center;
         vertical-align: center;
         padding-left: 12px;
+        padding-right: 12px;
         font-size: 15px;
     }
 
     .user-name-text{
         position: relative;
-        top:36px;
+        top:26px;
     }
 
     .user-name-icon {
@@ -105,7 +106,7 @@
 
     .menu-actions {
         position: fixed;
-        right: 16%;
+        right: 10%;
         top: 40px;
     }
 

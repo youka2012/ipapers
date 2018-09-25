@@ -30,7 +30,7 @@
         color: #2c3e50;
         height: 100%;
         min-height: 100%;
-        width: 60%;
+        width: 72%;
         margin:0 auto;
         position: relative;
         box-sizing: border-box;

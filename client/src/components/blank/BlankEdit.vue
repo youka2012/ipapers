@@ -5,8 +5,8 @@
                 <Tooltip content="点击查看详情" placement="right">
                     <h2 @click="getDetail('P',paper.code)" class="item-title">{{this.paper.title}}</h2>
                 </Tooltip>
-                <h4>{{'问卷码: '+this.paper.code+'    截至:' + paper.dateLine}}</h4>
-                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.date+'   联系方式:' +paper.contact}}</h4>
+                <h4>{{'问卷码: '+this.paper.code+' 截至:' + paper.dateLine}}</h4>
+                <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.date+' 联系方式:' +paper.contact}}</h4>
             </div>
         </Card>
 
@@ -81,16 +81,16 @@
             return {
                 paperCode: this.$route.params.paperCode,
                 paper: {},
-                profile:{
-                    number:'',
-                    name:'',
-                    department:'',
-                    remark:''
+                profile: {
+                    number: '',
+                    name: '',
+                    department: '',
+                    remark: ''
                 },
                 answers: [
                     /*{index:n,required:true,type:'',answer:['',]}*/
                 ],
-                ruleProfile:{
+                ruleProfile: {
                     number: [
                         {required: true, message: 'Please input your number', trigger: 'blur'}
                     ],
@@ -110,28 +110,20 @@
             }
         },
         created() {
-            this.fetchData();
-            this.answers = this.paper.questions.map(function (question) {
-                /*var answer;
-                switch (question.type) {
-                    case 'SINGLE':
-                        answer = '';
-                        break;
-                    case 'MULTIPLE':
-                        answer = [];
-                        break;
-                    case 'INPUT':
-                        answer = '';
-                        break;
-                }*/
-                return {index: question.index, required: question.required,type:question.type, answer: []};
-            })
+            this.fetchData(() => {
+                if(this.paper && this.paper.questions){
+                    this.answers = this.paper.questions.map(function (question) {
+                        return {index: question.index, required: question.required, type: question.type, answer: []};
+                    })
+                }
+            });
         },
         methods: {
-            fetchData() {
+            fetchData(_callBack) {
                 // this.paper = paperMock;
-                this.$fetch.get('/getPaperByCode',{paperCode: this.paperCode},json=>{
-                    this.paper = json;
+                this.$fetch.get('/getPaperByCode', {paperCode: this.paperCode}, json => {
+                    json && (this.paper = json);
+                    _callBack();
                 })
             },
             getDetail(type, index) {
@@ -146,20 +138,43 @@
                     })[0];
                     title = (Number(index) + 1) + ' . ' + currentQuestion.title;
                     content = currentQuestion.description;
-                    console.log(currentQuestion);
                 }
                 this.$Modal.confirm({
                     title: title,
                     content: '<p>' + content + '</p>',
                     okText: '确定',
-                    cancelText:' ',
+                    cancelText: ' ',
                 });
             },
             submit() {
                 //todo check input
-                var reply = Object.assign({},this.profile);
+                var reply = Object.assign({paperCode:this.paperCode}, this.profile);
                 reply.answers = this.answers;
-                console.log(reply.answers[0].answer);
+                console.log(reply);
+                this.$Modal.confirm({
+                    title: "确认",
+                    content: "<p>确定提交此答卷?</p>",
+                    onOk: () => {
+                        this.$refs["profileForm"].validate(valid => {
+                            if (valid) {
+                                this.$fetch.post("/submitAnswer",
+                                    {answer: reply},
+                                    res => {
+                                        if (res === 200) {
+                                            this.$router.push({
+                                                name: "login"
+                                            });
+                                        }
+                                    }
+                                );
+                            } else {
+                                this.$Message.error("数据验证失败,请检查!");
+                            }
+                        });
+                    },
+                    onCancel: () => {
+                    }
+                });
 
             },
             back() {
@@ -184,7 +199,7 @@
         background-color: rgb(238, 238, 238);
     }
 
-    .remark-input{
+    .remark-input {
         padding: 0 25%;
         width: 100%;
     }
@@ -200,7 +215,7 @@
     .question-card {
         width: 100%;
         background: #eee;
-        padding: 20px;
+        padding: 10px 20px;
         text-align: left;
     }
 

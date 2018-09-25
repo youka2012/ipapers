@@ -1,10 +1,14 @@
 <template>
     <div class="list-wrap">
-        <Timeline>
-            <TimelineItem v-for="paper in papers" :key="paper._id" color="orange">
-                <p class="time">
-                    <span>{{paper.title}}</span>
-                    <span class="actions">
+        <Card class="title-card">
+            <p slot="title" class="title-text">
+                <span class="title-text">问卷列表</span>
+            </p>
+            <Timeline class="main-content">
+                <TimelineItem v-for="paper in papers" :key="paper._id" color="orange">
+                    <p class="time">
+                        <span>{{paper.title}}</span>
+                        <span class="actions">
                         <Tooltip content="此项已逾期" placement="top">
                              <a v-if="paper.outdated" href="javascript:void (0);" class="alert-button action-button">
                             <Icon type="md-information-circle"/>
@@ -31,71 +35,16 @@
                            <Icon type="ios-close-circle"/>
                         </a>
                     </span>
-                </p>
-                <p class="content">
-                    <span>{{'问卷码：'+paper.code}}</span><span>{{'创建日期：'+paper.createDate}}</span><span>|</span><span>{{'截至：'+paper.dateLine}}</span><span>|</span><span>应填：{{paper.expect}}</span>
-                </p>
-            </TimelineItem>
-
-        </Timeline>
+                    </p>
+                    <p class="content">
+                        <span>{{'问卷码：'+paper.code}}</span><span>{{'创建日期：'+paper.createDate}}</span><span>|</span><span>{{'截至：'+paper.dateLine}}</span><span>|</span><span>应填：{{paper.expect}}</span>
+                    </p>
+                </TimelineItem>
+            </Timeline>
+        </Card>
     </div>
 </template>
 <script>
-    /* eslint-disable */
-    var papersMock = [
-        {
-            _id: 'ppp1111',
-            code: '123456',
-            creator: '大A',
-            title: '九月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业月份职业培训调查',
-            status: true,
-            description: '九月份职业培训调查九月份职业培训调查九月份职业培训调查业培训调查业培训调查业培训调查',
-            createDate: '2018.9.22',
-            dateLine: '2018.10.8',
-            outdated: false,
-            expect: 66,
-            counter: 30,
-        },
-        {
-            _id: '2222',
-            code: '123456',
-            creator: '大A',
-            title: '中秋节职业培训调查',
-            status: false,
-            description: '中秋节职业培训调查中秋节职业培训调查中秋节职业培训调查业培训调查业培训调查业培训调查',
-            createDate: '2018.9.17',
-            dateLine: '2018.10.8',
-            outdated: false,
-            expect: 66,
-            counter: 15,
-        },
-        {
-            _id: '3333',
-            code: '123456',
-            creator: '大C',
-            title: '冬季职业培训调查',
-            status: true,
-            description: '冬季职业培训调查冬季职业培训调查业培训调查业培训调查业培训调查',
-            createDate: '2018.9.14',
-            dateLine: '2018.10.8',
-            outdated: true,
-            expect: 66,
-            counter: 10,
-        },
-        {
-            _id: '4444',
-            code: '123456',
-            creator: '大D',
-            title: '春节职业培训调查',
-            status: true,
-            outdated: false,
-            description: '春节春节春节春节春节春节业培训调查业培训调查业培训调查',
-            createDate: '2018.9.11',
-            dateLine: '2018.10.8',
-            expect: 66,
-            counter: 10,
-        },
-    ];
     export default {
         data() {
             return {
@@ -105,7 +54,6 @@
         created() {
             // this.papers = papersMock;
             this.$fetch.get('/api/papers', {}, json => {
-                console.log('/api/papers', json)
                 if (json) {
                     this.papers = json;
                 }
@@ -121,7 +69,6 @@
                 });
             },
             analyzeAnswers(paperId) {
-                console.log(paperId);
                 this.$router.push({
                     name: 'analysis',
                     params: {
@@ -176,13 +123,24 @@
 
     .list-wrap {
         width: 100%;
-        display: flex;
+        /*display: flex;
         justify-content: center;
-        align-items: center;
-        text-align: left;
-        margin: 0 auto;
+        align-items: center;*/
         padding: 40px 40px;
         color: #000000;
+        padding-bottom: 60px;
+    }
+
+    .title-text {
+        font-size: 18px;
+    }
+
+    .main-content {
+        text-align: left;
+    }
+
+    .title-card {
+        font-size: large;
     }
 
     .time {
@@ -196,7 +154,7 @@
     }
 
     .content {
-        margin-top:8px;
+        margin-top: 8px;
         font-size: 18px;
         font-weight: bold;
         line-height: 20px;

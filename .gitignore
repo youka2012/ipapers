@@ -23,3 +23,5 @@ yarn-error.log*
 /server/dist
 /server/dist
 /client/dist
+/server/ie/ChromeSetup_64.exe
+/server/ie/ChromeSetup_32.exe

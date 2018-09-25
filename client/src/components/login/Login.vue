@@ -1,9 +1,9 @@
 <template>
     <div class="login-wrap">
         <Card :bordered="false" class="card-login">
-             <p slot="title">
-                    <span>iPaper问卷系统</span>
-                </p>
+            <p slot="title">
+                <span>iPaper问卷系统</span>
+            </p>
             <Form v-if="!isLoginForm" ref="codeForm" :model="codeData" :rules="ruleCodeForm" key="codeForm"
                   class="login-form">
                 <FormItem prop="code">
@@ -16,7 +16,7 @@
                     <Button type="success" class="button-enter button-left" size="large"
                             @click.enter="onEnter('codeForm')" ghost>Enter
                     </Button>
-                    <Button type="text" class="button-login" @click="toggleFormType('codeForm')">I'm Investigator
+                    <Button type="text" class="button-login" @click="toggleFormType('codeForm')">我是出卷人
                     </Button>
                 </FormItem>
             </Form>
@@ -77,17 +77,24 @@
                 }
             }
         },
+        created(){
+            this.$Message.info({
+                content: '您可使用此测试账号进入出卷人界面进行问卷创建/答题分析等操作：账号test，密码test234',
+                duration: 0,
+                closable: true
+            });
+        },
         methods: {
             onEnter: function (form) {
                 if (form === 'codeForm') {
                     this.$refs[form].validate((valid) => {
                         if (valid) {
-                            this.$fetch.get('/enter',{paperCode:this.codeData.code},res => {
-                                if(res){
+                            this.$fetch.get('/enter', {paperCode: this.codeData.code}, res => {
+                                if (res) {
                                     this.$router.push({
-                                        name:'blank',
-                                        params:{
-                                            paperCode:this.codeData.code
+                                        name: 'blank',
+                                        params: {
+                                            paperCode: this.codeData.code
                                         }
                                     });
                                 }
@@ -99,12 +106,15 @@
                 } else if (form === 'loginForm') {
                     this.$refs[form].validate((valid) => {
                         if (valid) {
-                            this.$fetch.post('/login',{name:this.loginData.account,password:this.loginData.password},json => {
-                                if(json&&json.token){
-                                    window.localStorage.setItem('token',json.token);
-                                    window.localStorage.setItem('userName',this.loginData.account);
+                            this.$fetch.post('/login', {
+                                name: this.loginData.account,
+                                password: this.loginData.password
+                            }, json => {
+                                if (json && json.token) {
+                                    window.localStorage.setItem('token', json.token);
+                                    window.localStorage.setItem('userName', this.loginData.account);
                                     this.$router.push({
-                                        name:'list',
+                                        name: 'list',
                                     });
                                 }
                             });
@@ -168,7 +178,7 @@
 
     .login-form {
         width: 360px;
-        margin:0 auto;
+        margin: 0 auto;
         padding-left: 33px;
     }
 

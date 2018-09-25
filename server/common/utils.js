@@ -37,9 +37,10 @@ module.exports = {
   },
 
   formatDate(date,fmt){
-      if(!date || !fmt){
+      if(!date){
         return '';
       }
+      fmt = fmt || "yyyy-MM-dd";
       var o = {
           "M+": date.getMonth() + 1, //月份 
           "d+": date.getDate(), //日 
