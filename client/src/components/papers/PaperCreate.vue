@@ -229,7 +229,7 @@
         methods: {
             addQuestion() {
                 this.$refs["questionForm"].validate(valid => {
-                    if (valid && this.newQuestion !== 'INPUT' && !this.newQuestion.items.some(item => item.content === '')) {
+                    if (valid && this.newQuestion.type !== 'INPUT' && !this.newQuestion.items.some(item => item.content === '')) {
                         this.$Message.success("验证通过!");
                         this.paper.questions.push(
                             JSON.parse(JSON.stringify(this.newQuestion))
