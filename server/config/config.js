@@ -24,22 +24,6 @@ module.exports = {
   init_data: {
     db: {
       tables: ['users', 'papers', 'answers'],
-      datas: {
-        users: [
-          {
-            name: 'admin',
-            password: 'chaoma2018',
-          },
-          {
-            name: 'test',
-            password: 'test1234',
-          },
-          {
-            name: 'chao',
-            password: 'ma1234',
-          }
-        ]
-      }
     }
   }
 };

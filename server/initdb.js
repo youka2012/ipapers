@@ -1,7 +1,8 @@
 var MongoClient = require("mongodb").MongoClient;
+import InitTestData from './test.data';
 
 // 引入配置
-var config = require("./config/config");
+const config = require("./config/config");
 
 MongoClient.connect(config.mongodb_url_path, function (err, db) {
 
@@ -12,9 +13,9 @@ MongoClient.connect(config.mongodb_url_path, function (err, db) {
         dp.collection(name).drop()
         dp.createCollection(name);
     })
-    var datas = config.init_data.db.datas
-    for (var c in datas) {
-        var ct = dp.collection(c);
-        ct.insertMany(datas[c]);
+    
+    for (let c in InitTestData) {
+        let ct = dp.collection(c);
+        ct.insertMany(InitTestData[c]);
     }
 })
