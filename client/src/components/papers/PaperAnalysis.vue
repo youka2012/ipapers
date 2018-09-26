@@ -89,7 +89,7 @@
                     {
                         title: '备注',
                         key: 'remark',
-                        width: 170,
+                        width: 150,
                         align:'center',
                     },
 
@@ -103,7 +103,7 @@
                     this.tableColumns.push({
                         title: question.title ,
                         key: question.index,
-                        width: question.title.length > 16 ?200:100,
+                        width: question.title.length > 8 ?200:100,
                         align:'center',
                     });
                 });

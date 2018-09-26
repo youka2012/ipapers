@@ -11,6 +11,7 @@ node initedb
 test.data.js配置了初始化测试数据供参考
 test.api.js协定了前后端通信接口格式
 
+
 # 开发环境启动
 cd sever
 node index
@@ -25,7 +26,7 @@ npm run serve
 # 生产打包
 cd client
 npm run build打包到client/dist
-node express 静态文件指向了client/dist 这里是为了方便 实际生产可通过webpack插件copy-webpack-plugin或者gulp自动化文件转移等流程
+express 静态文件指向了client/dist 这里是为了方便 实际生产可通过webpack插件copy-webpack-plugin或者gulp自动化文件转移等流程
 
 github:
 https://github.com/youka2012/ipapers

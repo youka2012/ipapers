@@ -20,7 +20,7 @@
                 <p slot="title">
                     <span>{{question.title}}</span>
                 </p>
-                <p>题目类型:{{question.type}} 必填{{question.required}}</p>
+                <p>题目类型:{{question.type === 'INPUT'?'【填写题】':(question.type === 'SINGLE'?'【单选题】':'【多选题】')}} {{question.required?'【必答】':'【选答】'}}</p>
                 <div v-if="question.type !== 'INPUT'">
                     <p v-for="item in question.items" :key="item.index">
                         <span class="item-index">{{item.index}}</span>

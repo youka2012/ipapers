@@ -1,11 +1,14 @@
 <template>
     <div class="wrap-create">
-        <Card class="title-card">
+        <Card class="main-title-card">
             <p slot="title" class="title-text">
                 <span>新建问卷</span>
             </p>
         </Card>
         <Card class="paper-card card-item">
+            <p slot="title" class="card-title">
+                <span>出卷人信息</span>
+            </p>
             <Form ref="paperForm" :model="paper" :rules="rulePaper" :label-width="100">
                 <FormItem label="问卷标题" prop="title">
                     <Input v-model="paper.title" placeholder="Enter the title" clearable></Input>
@@ -31,15 +34,18 @@
         </Card>
 
         <Card class="card-item">
-            <p slot="title" class="question-card-title">
-                <span>题目列表</span>
+            <p slot="title" class="card-title">
+                <span>问题列表</span>
             </p>
             <Card v-for="(question,index) in paper.questions" :key="index" :bordered="false"
                   class="question-card card-item  question-list">
                 <p slot="title">
                     <span>{{index+1 + " . " +question.title}}</span>
                 </p>
-                <p>题目类型:{{question.type}} 必填{{question.required}}</p>
+                <p slot="extra" class="question-delete">
+                    <Icon type="ios-close-circle-outline" @click="deleteQuestion(index)"/>
+                </p>
+                <p>题目类型:{{question.type === 'INPUT'?'【填写题】':(question.type === 'SINGLE'?'【单选题】':'【多选题】')}} {{question.required?'【必答】':'【选答】'}}</p>
                 <div v-if="question.type !== 'INPUT'">
                     <p v-for="item in question.items" :key="item.index">
                         <span class="item-index">{{item.index}}</span>
@@ -53,6 +59,9 @@
         </Card>
 
         <Card class="add-card card-item">
+            <p slot="title" class="card-title">
+                <span>添加问题</span>
+            </p>
             <Form ref="questionForm" :model="newQuestion" :rules="ruleQuestion" :label-width="80">
                 <FormItem label="题目" prop="title">
                     <Input v-model="newQuestion.title" type="textarea" :autosize="{minRows: 2,maxRows: 5}"
@@ -220,8 +229,7 @@
         methods: {
             addQuestion() {
                 this.$refs["questionForm"].validate(valid => {
-                    if (valid) {
-                        //todo 检验
+                    if (valid && !this.newQuestion.items.some(item => item.content === '')) {
                         this.$Message.success("验证通过!");
                         this.paper.questions.push(
                             JSON.parse(JSON.stringify(this.newQuestion))
@@ -231,7 +239,7 @@
                         this.newQuestion.required = true;
                         this.newQuestion.items[0].content = "";
                     } else {
-                        this.$Message.error("验证失败!");
+                        this.$Message.error("验证失败,含有尚未填写的项!");
                     }
                 });
             },
@@ -276,6 +284,9 @@
                     onCancel: () => {
                     }
                 });
+            },
+            deleteQuestion(index){
+                this.paper.questions.splice(index,1);
             }
         }
     };
@@ -299,15 +310,15 @@
         width: 120px !important;
     }
 
-    .wrap-create {
+   /* .wrap-create {
         height: 100%;
         width: 100%;
         background-color: rgb(238, 238, 238);
         text-align: left;
-        padding-top: 8px;
-    }
+        padding-top: 4px;
+    }*/
 
-    .title-card{
+    .main-title-card{
         text-align: center;
         font-size: large;
     }
@@ -321,11 +332,12 @@
         margin-bottom: 8px;
     }
 
-    .question-card-title {
+    .card-title {
         text-align: center;
     }
 
-    .action-button {
+    .question-delete{
+        cursor: pointer;
         font-size: 28px;
     }
 
