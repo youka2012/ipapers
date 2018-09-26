@@ -81,7 +81,7 @@
         height: 60px;
         /*border:20px solid #a1a1a1;*/
         border-radius: 60px;
-        background-color: #555;
+        background-color: #000000;
         color: #fff;
         position: fixed;
         top:-30px;

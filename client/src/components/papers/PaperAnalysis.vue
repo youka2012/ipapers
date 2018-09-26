@@ -7,20 +7,26 @@
         </Card>
         <Card class="title-card card-item">
             <div style="text-align:center">
-                <Tooltip content="点击查看详情" placement="right">
+                <!--<Tooltip content="点击查看详情" placement="right">-->
                     <h2 @click="getDetail('P',paper.code)" class="item-title">{{this.paper.title}}</h2>
-                </Tooltip>
-                <h4>{{'问卷码: '+this.paper.code+' 截至:' + paper.dateLine}}</h4>
+                <!--</Tooltip>-->
+                <h4>{{'问卷码: '+this.paper.code+'截至:' + paper.dateLine}}</h4>
                 <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.createDate+' 联系方式:' +paper.contact}}</h4>
             </div>
         </Card>
         <Card class="content-card card-item">
-            <Table v-if="tableColumns" width="auto" height="auto" border :columns="tableColumns" :data="tableData"></Table>
+            <p href="javascript:void(0);" slot="title">
+                答题情况表
+            </p>
+            <a href="javascript:void(0);" slot="extra" @click="exportExcel">
+                <span title="导出EXCEL文件">导出</span>
+            </a>
+            <Table v-if="tableColumns" width="auto" height="auto" border :columns="tableColumns" :data="tableData" ref="answertable"></Table>
         </Card>
     </div>
 </template>
 <script>
-
+    import excelExporter from '../../excel/ExcelPlugin';
     export default {
         data() {
             return {
@@ -37,7 +43,8 @@
                             return h('div', [
                                 h('Button', {
                                     props: {
-                                        type: 'text',
+                                        type: 'warning',
+                                        ghost:true,
                                         size: 'small'
                                     },
                                     on:{
@@ -45,9 +52,17 @@
                                             this.deleteItem(params.index)
                                         }
                                     }
-                                }, '[DEL]')
+                                }, '删除')
                             ]);
                         }
+                    },
+                    {
+                        title: '序号',
+                        key: '_index',
+                        fixed: 'left',
+                        width: 90,
+                        align:'center',
+                        sortable:true,
                     },
                     {
                         title: '姓名',
@@ -55,23 +70,26 @@
                         width: 100,
                         fixed: 'left',
                         align:'center',
+                        sortable:true,
                     },
                     {
                         title: '工号',
                         key: 'number',
                         width: 100,
                         align:'center',
+                        sortable:true,
                     },
                     {
                         title: '部门',
                         key: 'department',
                         width: 100,
                         align:'center',
+                        sortable:true,
                     },
                     {
                         title: '备注',
                         key: 'remark',
-                        width: 200,
+                        width: 170,
                         align:'center',
                     },
 
@@ -83,23 +101,24 @@
             this.fetchData(() => {
                 this.paper.questions&&this.paper.questions.forEach(question => {
                     this.tableColumns.push({
-                        title: '第' + (Number(question.index) + 1) + '题',
+                        title: question.title ,
                         key: question.index,
-                        width: 150,
+                        width: question.title.length > 16 ?200:100,
                         align:'center',
                     });
                 });
                 var answerList = this.paper.answerList;
                 if(answerList && Object.prototype.toString.call(answerList) === '[object Array]'){
-                    answerList.forEach(answerObj => {
+                    answerList.forEach((answerObj,_index) => {
                         var column = {
+                            _index:_index + 1,
                             number: answerObj.number,
                             name: answerObj.name,
                             department: answerObj.department,
-                            remark: answerObj.remark,
+                            remark: answerObj.remark?answerObj.remark:"-",
                         };
                         answerObj.answers.forEach(function (answer) {
-                            column[answer.index] = answer.answer.toString();
+                            column[answer.index] = answer.answer?answer.answer.toString():"-";
                         });
                         this.tableData.push(column);
                     });
@@ -135,6 +154,9 @@
                     onCancel: () => {
                     }
                 });
+            },
+            exportExcel(){
+                excelExporter(this.tableColumns, this.$refs.answertable, this.paper.title + '-答题情况表');
             }
         }
     }

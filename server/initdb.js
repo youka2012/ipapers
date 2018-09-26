@@ -1,5 +1,6 @@
 var MongoClient = require("mongodb").MongoClient;
-import InitTestData from './test.data';
+//测试数据
+const InitTestData = require("./test.data");
 
 // 引入配置
 const config = require("./config/config");

@@ -6,7 +6,7 @@ import PaperDetail from '../components/papers/PaperDetail'
 import PaperAnalysis from '../components/papers/PaperAnalysis'
 import PaperList from '../components/papers/PaperList'
 
-var routes = [
+const routes = [
     {
         name: 'enter',
         path: '/',

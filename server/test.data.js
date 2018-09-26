@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   users: [{
       name: 'admin',
       password: 'chaoma2018',
@@ -12,7 +12,7 @@ export default {
       password: 'ma1234',
     }
   ],
-  papaers: [{
+  /* papaers: [{
       title: "微信小程序调查问卷",
       dateLine: "2019-8-30",
       creator: "马超",
@@ -184,7 +184,7 @@ export default {
       code: "7K616QaEKfbX",
       createDate: "2018-09-25",
       questions: [{
-          title: "是否听说过微信小程序？",
+          title: "是否听说过蚂蚁花呗？",
           type: "SINGLE",
           required: true,
           index: 0,
@@ -199,7 +199,7 @@ export default {
           ]
         },
         {
-          title: "是否使用过微信小程序？",
+          title: "是否使用过蚂蚁花呗？",
           type: "SINGLE",
           required: true,
           index: 1,
@@ -218,7 +218,7 @@ export default {
           ]
         },
         {
-          title: "您使用微信小程序多久了？",
+          title: "您使用蚂蚁花呗多久了？",
           type: "SINGLE",
           required: true,
           index: 2,
@@ -237,7 +237,7 @@ export default {
           ]
         },
         {
-          title: "您使用微信小程序的理由是？",
+          title: "您使用蚂蚁花呗的理由是？",
           type: "MULTIPLE",
           required: true,
           index: 3,
@@ -264,7 +264,7 @@ export default {
           ]
         },
         {
-          title: "您会通过哪些方式寻找微信小程序？",
+          title: "您会通过哪些方式寻找蚂蚁花呗？",
           type: "MULTIPLE",
           required: true,
           index: 4,
@@ -291,7 +291,7 @@ export default {
           ]
         },
         {
-          title: "您觉得微信小程序可靠良好？",
+          title: "您觉得蚂蚁花呗可靠良好？",
           type: "SINGLE",
           required: true,
           index: 5,
@@ -306,7 +306,7 @@ export default {
           ]
         },
         {
-          title: "您觉得微信小程序值得大家期望？",
+          title: "您觉得蚂蚁花呗值得大家期望？",
           type: "SINGLE",
           required: true,
           index: 6,
@@ -321,7 +321,7 @@ export default {
           ]
         },
         {
-          title: "您对微信小程序的建议",
+          title: "您对蚂蚁花呗的建议",
           type: "INPUT",
           required: true,
           index: 7,
@@ -333,18 +333,18 @@ export default {
       ]
     },
     {
-      title: "微信小程序调查问卷",
+      title: "微信朋友圈调查问卷",
       dateLine: "2019-8-30",
       creator: "马超",
-      contact: "61907",
+      contact: "110000000",
       description: "感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！",
-      expect: "9999999",
+      expect: "7777",
       acount: "test",
       status: true,
-      code: "7K616QaEKfbX",
+      code: "7K616QaEKffj",
       createDate: "2018-09-25",
       questions: [{
-          title: "是否听说过微信小程序？",
+          title: "是否听说过微信朋友圈？",
           type: "SINGLE",
           required: true,
           index: 0,
@@ -359,7 +359,7 @@ export default {
           ]
         },
         {
-          title: "是否使用过微信小程序？",
+          title: "是否使用过微信朋友圈？",
           type: "SINGLE",
           required: true,
           index: 1,
@@ -378,7 +378,7 @@ export default {
           ]
         },
         {
-          title: "您使用微信小程序多久了？",
+          title: "您使用微信朋友圈多久了？",
           type: "SINGLE",
           required: true,
           index: 2,
@@ -397,7 +397,7 @@ export default {
           ]
         },
         {
-          title: "您使用微信小程序的理由是？",
+          title: "您使用微信朋友圈的理由是？",
           type: "MULTIPLE",
           required: true,
           index: 3,
@@ -424,7 +424,7 @@ export default {
           ]
         },
         {
-          title: "您会通过哪些方式寻找微信小程序？",
+          title: "您会通过哪些方式寻找微信朋友圈？",
           type: "MULTIPLE",
           required: true,
           index: 4,
@@ -451,7 +451,7 @@ export default {
           ]
         },
         {
-          title: "您觉得微信小程序可靠良好？",
+          title: "您觉得微信朋友圈可靠良好？",
           type: "SINGLE",
           required: true,
           index: 5,
@@ -466,7 +466,7 @@ export default {
           ]
         },
         {
-          title: "您觉得微信小程序值得大家期望？",
+          title: "您觉得微信朋友圈值得大家期望？",
           type: "SINGLE",
           required: true,
           index: 6,
@@ -481,7 +481,7 @@ export default {
           ]
         },
         {
-          title: "您对微信小程序的建议",
+          title: "您对微信朋友圈的建议",
           type: "INPUT",
           required: true,
           index: 7,
@@ -493,18 +493,18 @@ export default {
       ]
     },
     {
-      title: "微信小程序调查问卷",
-      dateLine: "2019-8-30",
-      creator: "马超",
+      title: "微信公众号调查问卷",
+      dateLine: "2019-11-30",
+      creator: "马超cc",
       contact: "61907",
       description: "感谢您能抽出几分钟时间来参加本次答题，现在我们就马上开始吧！",
       expect: "9999999",
       acount: "test",
       status: true,
-      code: "7K616QaEKfbX",
+      code: "7K616QaEKfty",
       createDate: "2018-09-25",
       questions: [{
-          title: "是否听说过微信小程序？",
+          title: "是否听说过微信公众号？",
           type: "SINGLE",
           required: true,
           index: 0,
@@ -519,7 +519,7 @@ export default {
           ]
         },
         {
-          title: "是否使用过微信小程序？",
+          title: "是否使用过微信公众号？",
           type: "SINGLE",
           required: true,
           index: 1,
@@ -538,7 +538,7 @@ export default {
           ]
         },
         {
-          title: "您使用微信小程序多久了？",
+          title: "您使用微信公众号多久了？",
           type: "SINGLE",
           required: true,
           index: 2,
@@ -557,7 +557,7 @@ export default {
           ]
         },
         {
-          title: "您使用微信小程序的理由是？",
+          title: "您使用微信公众号的理由是？",
           type: "MULTIPLE",
           required: true,
           index: 3,
@@ -652,5 +652,5 @@ export default {
         }
       ]
     },
-  ]
+  ] */
 }

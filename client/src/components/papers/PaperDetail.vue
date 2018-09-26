@@ -10,7 +10,7 @@
                 <Tooltip content="点击查看详情" placement="right">
                     <h2 @click="getDetail('P',paper.code)" class="item-title">{{this.paper.title}}</h2>
                 </Tooltip>
-                <h4>{{'问卷码: '+this.paper.code+'    截至:' + paper.dateLine}}</h4>
+                <h4>{{'问卷码: '+this.paper.code+'截至:' + paper.dateLine}}</h4>
                 <h4>{{'创建人:' + paper.creator + ' 创建日期:' +paper.createDate+'   联系方式:' +paper.contact}}</h4>
             </div>
         </Card>

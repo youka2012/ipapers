@@ -77,12 +77,8 @@
                 }
             }
         },
-        created(){
-            this.$Message.info({
-                content: '您可使用此测试账号进入出卷人界面进行问卷创建/答题分析等操作：账号test，密码test234',
-                duration: 0,
-                closable: true
-            });
+        created() {
+
         },
         methods: {
             onEnter: function (form) {
