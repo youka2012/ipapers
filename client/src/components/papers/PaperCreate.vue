@@ -229,7 +229,7 @@
         methods: {
             addQuestion() {
                 this.$refs["questionForm"].validate(valid => {
-                    if (valid && !this.newQuestion.items.some(item => item.content === '')) {
+                    if (valid && this.newQuestion !== 'INPUT' && !this.newQuestion.items.some(item => item.content === '')) {
                         this.$Message.success("验证通过!");
                         this.paper.questions.push(
                             JSON.parse(JSON.stringify(this.newQuestion))
@@ -310,13 +310,13 @@
         width: 120px !important;
     }
 
-   /* .wrap-create {
+    .wrap-create {
         height: 100%;
         width: 100%;
         background-color: rgb(238, 238, 238);
         text-align: left;
         padding-top: 4px;
-    }*/
+    }
 
     .main-title-card{
         text-align: center;
