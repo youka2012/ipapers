@@ -35,7 +35,7 @@
             <Card :bordered="false">
                 <p slot="title">
                     <Tooltip content="点击查看详情" placement="right">
-                        <span @click="getDetail('Q',question.index)" class="item-title">{{(Number(question.index)+1)+' . '+question.title}}</span>
+                        <span @click="getDetail('Q',question.index)" class="item-title">{{(Number(question.index)+1)+' . '+question.title}}{{question.required?'【必答项】':''}}</span>
                     </Tooltip>
                 </p>
 
@@ -147,7 +147,6 @@
                 });
             },
             submit() {
-                //todo check input
                 var reply = Object.assign({paperCode:this.paperCode}, this.profile);
                 reply.answers = this.answers;
                 console.log(reply);
@@ -156,7 +155,9 @@
                     content: "<p>确定提交此答卷?</p>",
                     onOk: () => {
                         this.$refs["profileForm"].validate(valid => {
-                            if (valid) {
+                            if (valid && !this.answers.some(anObj => {
+                                return anObj.required && anObj.answer.length === 0
+                            })) {
                                 this.$fetch.post("/submitAnswer",
                                     {answer: reply},
                                     res => {
@@ -168,7 +169,7 @@
                                     }
                                 );
                             } else {
-                                this.$Message.error("数据验证失败,请检查!");
+                                this.$Message.error("尚有未选择的项,请检查!");
                             }
                         });
                     },
