@@ -8,11 +8,14 @@
 在MongoDb创建ipapers数据库，可在config.js配置数据库及初始化及测试数据
 cd sever
 node initedb
+test.data.js配置了初始化测试数据
+test.api.js协定了前后端通信接口格式
 
 # 开发环境启动
 cd sever
 node index
 config.js配置网络
+
 
 cd client
 npm run serve
