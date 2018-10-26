@@ -287,7 +287,7 @@
             },
             deleteQuestion(index){
                 this.paper.questions.splice(index,1);
-            }
+            },
         }
     };
 </script>
