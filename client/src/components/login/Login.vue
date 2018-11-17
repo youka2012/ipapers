@@ -161,7 +161,7 @@
 <style scoped>
     .login-wrap {
         height: 100%;
-        min-height: 900px;
+        min-height: 882px;
         display: flex;
         align-items: center;
         justify-content: center;
